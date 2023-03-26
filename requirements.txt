@@ -1,2 +1,4 @@
 # Scraping
 scrapy==2.8.0
+
+# To install scrapy you also need https://docs.scrapy.org/en/latest/intro/install.html#intro-install-platform-notes
