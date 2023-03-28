@@ -24,24 +24,20 @@ class Game:
     genre: str
     price: float
     rating: float
-    tributes: int
+    tributes: list[Game]
+    release_date: int
     likeability: float
     recommended_games: dict[Game, float]
 
-    def __init__(self, name: str, genre: str, price: float, rating: float) -> None:
+    def __init__(self, name: str, genre: str, price: float, rating: float, release_date: int) -> None:
         self.name = name
         self.genre = genre
         self.price = price
         self.rating = rating
-        self.tributes = 0
+        self.release_date = release_date
+        self.tributes = []
         self.likeability = 0
-        self.game_score = self.calculate_score()
         self.recommended_games = {}
-
-    def calculate_score(self) -> float:
-        """Calculate the score of the game based on its price, rating, etc."""
-        # Come up with a cool algorithm here.
-        return self.rating
 
 
 class RecommendedGamesNetwork:
@@ -104,6 +100,9 @@ class RecommendedGamesNetwork:
         #  Adding a one way edge
         init_game.recommended_games[recommended_game] = weight
 
+        #  Updating tributes
+        recommended_game.tributes.append(init_game)
+
         #  Updating tributes attribute for recommended game
         recommended_game.tributes += 1
 
@@ -145,7 +144,8 @@ class RecommendedGamesNetwork:
 
         likeability is scored based on:
             - tributes
-            -
+            - ratings
+            - tributes weight
 
         """
 
@@ -161,6 +161,7 @@ def create_game_recommendation_network(user_games: list[Game],
     #  Creating a new queue of the games to be added
     #  num_recommendations represents the maximum possible size of the queue (Optional)
     games_queue = Queue(num_recommendations)
+    visited_games = set()
 
     for game in user_games:
         games_queue.put_nowait(game)
@@ -170,13 +171,15 @@ def create_game_recommendation_network(user_games: list[Game],
     #  Exit if the queue is empty (Occurs when not enough reviews on games were found)
     while not games_queue.empty() and network.num_games < num_recommendations:
         game = games_queue.get_nowait()
+        visited_games.add(game)
 
         # TODO: Andy's function in place for the empty list return a list of recommended games given game
         recommendations = []
 
         for recommended_game in recommendations:
             network.add_recommendation(game, recommended_game)  # TODO: figure out weight
-            games_queue.put_nowait(recommended_game)
+            if recommended_game not in visited_games:
+                games_queue.put_nowait(recommended_game)
 
     return network
 
@@ -203,6 +206,7 @@ def calculate_weight(init_game: Game, recommended_game: Game, user_games: list[G
     return weight
 
 
+#  TODO: This function will be used in the desicion tree when we get the user's preference
 def price_similarity(init_game_price: float, recommended_game_price: float) -> float:
     """Return a similarity score between 0 and 1, inclusive, given the price of a game
     and a recommended game.
