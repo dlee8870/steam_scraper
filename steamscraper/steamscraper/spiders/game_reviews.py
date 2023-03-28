@@ -1,9 +1,8 @@
 import scrapy
-from scrapy.crawler import CrawlerProcess
 
 
 class SteamReviewsSpider(scrapy.Spider):
-    name = "review_scrape"
+    name = "game_reviews"
 
     def start_requests(self):
         # Enter the URL of the game's page you want to scrape reviews from.

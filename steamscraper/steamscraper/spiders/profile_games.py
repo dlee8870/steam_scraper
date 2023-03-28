@@ -2,7 +2,7 @@ import scrapy
 
 
 class ReviewSpider(scrapy.Spider):
-    name = 'similar_games'
+    name = 'profile_games'
 
     def start_requests(self):
         urls = [
