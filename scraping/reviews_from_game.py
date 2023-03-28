@@ -19,7 +19,7 @@ def get_n_reviews(appid='1172380', n=10):
         'json': 1,
         'filter': 'all',
         'language': 'english',
-        'day_range': 9223372036854775807,
+        'day_range': 9223372036854775807,  # all time
         'review_type': 'all',
         'purchase_type': 'all'
     }

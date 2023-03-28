@@ -1,24 +1,17 @@
 from bs4 import BeautifulSoup
 import requests
-from requests import session
 
 
-def get_app_ids(profile_id: int | str = 'DadFox1'):
-    cookies = {'birthtime': '283993201',
-               'mature_content': '1'}
+def get_app_ids(profile_id: int = 'DadFox1'):
+    cookies = {'birthtime': '283993201', 'mature_content': '1'}  # Bypasses age checks for games
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    data = {'username': 'steam_scraping_temp', 'password': 'JANSF958^%195ma'}
+    post = "https://help.steampowered.com/en/login/"
 
-    headers = {
-        'User-Agent': 'Mozilla/5.0'
-    }
-
-    if isinstance(profile_id, str):
-        response = requests.get(url=f'https://steamcommunity.com/profiles/{profile_id}/games/?tab=all',
-                                headers=headers,
-                                cookies=cookies)
-    else:
-        response = requests.get(url=f'https://steamcommunity.com/id/{profile_id}/games/?tab=all',
-                                headers=headers,
-                                cookies=cookies)
-
-    soup = BeautifulSoup(response.text, 'html.parser')
-    return soup
+    with requests.session() as s:
+        s.post(post, data=data)  # log us in
+        r = s.get(url=f'https://steamcommunity.com/profiles/{profile_id}/games/?tab=all',
+                  headers=headers,
+                  cookies=cookies)
+        soup = BeautifulSoup(r.text, 'html.parser')
+        return soup
