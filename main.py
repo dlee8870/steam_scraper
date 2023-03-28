@@ -39,6 +39,27 @@ class Game:
         self.likeability = 0
         self.recommended_games = {}
 
+    def update_game_likeability(self, max_tributes: int) -> None:
+        """Updates game instance attribute likeability
+
+        likeability is scored based on:
+            - tributes
+            - ratings
+            - tributes weight
+
+        """
+
+        tribute_score = len(self.tributes) / max_tributes
+
+        accumulated_weight = 0
+
+        for tribute in self.tributes:
+            accumulated_weight += tribute.recommended_games[self]
+
+        tributes_weight = accumulated_weight / len(self.tributes)
+
+        self.likeability = tributes_weight + tribute_score + self.rating
+
 
 class RecommendedGamesNetwork:
     """A directed graph where each vertex represents a game object and each directed edge represents a
@@ -155,6 +176,9 @@ class RecommendedGamesNetwork:
             - tributes weight
         """
 
+        for game in self._games.values():
+            game.update_game_likeability(self.max_tributes)
+
 
 def create_game_recommendation_network(user_games: list[Game],
                                        num_recommendations: int = 10000) -> RecommendedGamesNetwork:
@@ -180,6 +204,7 @@ def create_game_recommendation_network(user_games: list[Game],
         visited_games.add(game)
 
         # TODO: Andy's function in place for the empty list return a list of recommended games given game
+        # TODO: Andy get weight, calculated based on how many reviews recommended the game
         recommendations = []
 
         for recommended_game in recommendations:
