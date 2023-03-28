@@ -45,17 +45,21 @@ class RecommendedGamesNetwork:
         recommendation.
     """
     # Public Instance Attributes
-    #   - num_games: The number of games in the network
+    #   - num_games: The number of games in the network.
+    #   - max_tributes: The max number of tributes in the network.
     #
     # Private Instance Attributes
     #   - _games: A collection of the games contained in this graph.
     #                    Keys: Game name, Values: Game object
     num_games: int
     _games: dict[str, Game]
+    max_tributes = int
 
     def __init__(self):
         self.num_games = 0
         self._games = {}
+        self.max_tributes = 0
+
 
     def add_game_by_info(self, name: str, genre: str, price: float, rating: float) -> None:
         """Add a game with the given name, score, and rating in the network.
@@ -105,6 +109,7 @@ class RecommendedGamesNetwork:
 
         #  Updating tributes attribute for recommended game
         recommended_game.tributes += 1
+        self.max_tributes = max(self.max_tributes, recommended_game.tributes)
 
     def get_recommendations(self, game: str) -> set[Game]:
         """Return the set of games recommended by game.
@@ -140,13 +145,14 @@ class RecommendedGamesNetwork:
             raise ValueError("One of the games do not exist in this network.")
 
     def update_games_likeability(self) -> None:
-        """Updates each games instance attribute likeability
+        """Updates each games instance attribute likeability.
 
-        likeability is scored based on:
+        Likeability score will be between 0 and 3, inclusive, where 3 indicates the highest likeability for a game.
+
+        Likeability is scored based on:
             - tributes
             - ratings
             - tributes weight
-
         """
 
 
@@ -182,28 +188,6 @@ def create_game_recommendation_network(user_games: list[Game],
                 games_queue.put_nowait(recommended_game)
 
     return network
-
-
-def calculate_weight(init_game: Game, recommended_game: Game, user_games: list[Game]) -> float:
-    """Return the weight of recommendation from init_game to recommended_game.
-
-    NOT FINISHED.
-    """
-    weight = 0
-    # If user has already played recommended_game, calculate the weight based off of the user's existing
-    # reviews of recommended_game
-    if recommended_game in user_games:
-        # Use the existing ratings given by the user to determine weight score.
-        # weight = ratings of recommended_game / ratings of init_game
-        ...
-    else:
-        # A possible algorithm for this function (may change later)
-        if init_game.genre == recommended_game.genre:
-            weight += 0.5
-
-        weight += price_similarity(init_game.price, recommended_game.price)
-
-    return weight
 
 
 #  TODO: This function will be used in the desicion tree when we get the user's preference
