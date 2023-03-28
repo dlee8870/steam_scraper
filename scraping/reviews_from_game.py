@@ -1,15 +1,16 @@
 import requests
+from typing import Any
 
 
-def get_reviews(appid, params={'json': 1}):
+def get_reviews(appid: int, params: dict[str, Any]) -> requests.models.Response.json:
     """Return the json of the game review page
     """
     url = 'https://store.steampowered.com/appreviews/'
-    response = requests.get(url=url + appid, params=params, headers={'User-Agent': 'Mozilla/5.0'})
+    response = requests.get(url=url + str(appid), params=params, headers={'User-Agent': 'Mozilla/5.0'})
     return response.json()
 
 
-def get_n_reviews(appid='1172380', n=10):
+def get_n_reviews(appid: int = 1172380, n: int = 5):
     """Return a list of reviews of appid where each review is a dictionary containing metadata around the review.
     There are n reviews, sorted by the most helpful.
     """
