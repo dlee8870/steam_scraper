@@ -1,4 +1,5 @@
 import scrapy
+from scrapy.crawler import CrawlerProcess
 
 
 class SteamReviewsSpider(scrapy.Spider):
@@ -34,3 +35,8 @@ class SteamReviewsSpider(scrapy.Spider):
             'reviewer_username': response.css('div.user_avatar img::attr(alt)').extract_first().strip(),
             'reviewer_profile_url': response.css('div.user_avatar a::attr(href)').extract_first().strip(),
         }
+
+
+process = CrawlerProcess()
+process.crawl(SteamReviewsSpider)
+process.start()

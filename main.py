@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import steamscraper.steamscraper as scraper
 from queue import Queue
 
@@ -53,11 +54,9 @@ class RecommnededGamesNetwork:
     num_games: int
     _games: dict[str, Game]
 
-
     def __init__(self):
         self.num_games = 0
         self._games = {}
-
 
     def add_game_by_info(self, name: str, genre: str, price: float, rating: float) -> None:
         """Add a game  with the given name, score, and rating in the network.
@@ -143,6 +142,15 @@ class RecommnededGamesNetwork:
                 raise ValueError("init_game does not have an edge directed to recommended_game")
         else:
             raise ValueError("One of the games do not exist in this network.")
+
+    def update_games_likeability(self) -> None:
+        """Updates each games instance attribute likeability
+
+        likeability is scored based on:
+            - tributes
+            -
+
+        """
 
 
 def create_game_recommendation_network(user_games: list[Game],
