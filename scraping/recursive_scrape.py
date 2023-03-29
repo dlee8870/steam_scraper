@@ -9,13 +9,15 @@ class User:
 
     def __init__(self, profile_id: str | int):
         if isinstance(profile_id, str):
-            convert_to_64bit(profile_id)
+            self.profile_id = convert_to_64bit(profile_id)
 
         else:
             self.profile_id = profile_id
 
     def scrape_similar(self):
-        games_from_profile.top_n_played(self.profile_id, 10)
+        topn = games_from_profile.top_n_played(self.profile_id, 10)
+        for t in topn:
+            reviews_from_game.get_n_reviews(t['appid'], 5)
 
 
 def convert_to_64bit(profile_id: str = 'star_19642') -> int:
