@@ -2,7 +2,7 @@ import requests
 from typing import Any
 
 
-def get_reviews(appid: int, params: dict[str, Any]) -> requests.models.Response.json:
+def get_reviews_response(appid: int, params: dict[str, Any]) -> requests.models.Response.json:
     """Return the json of the game review page
     """
     url = 'https://store.steampowered.com/appreviews/'
@@ -30,7 +30,7 @@ def get_n_reviews(appid: int = 1172380, n: int = 5):
         params['num_per_page'] = min(100, n)
         n -= 100
 
-        response = get_reviews(appid, params)
+        response = get_reviews_response(appid, params)
         cursor = response['cursor']
         reviews += response['reviews']
 
