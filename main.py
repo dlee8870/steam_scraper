@@ -11,6 +11,8 @@ class Game:
     - name: Name of the game
     - genre: Genre of the game
     - price: Price of the game
+    - online: Whether there is an online component to the agme
+    - multiplayer: Whether there is a multiplayer option
     - rating: Rating for this game
     - tributes: The number of games which have a directed edge pointing to itself
     - release_date: Release date of the game
@@ -22,16 +24,21 @@ class Game:
     name: str
     genre: str
     price: float
+    online: bool
+    multiplayer: bool
     rating: float
     tributes: list[Game]
     release_date: int
     likeability: float
     recommended_games: dict[Game, float]
 
-    def __init__(self, name: str, genre: str, price: float, rating: float, release_date: int) -> None:
+    def __init__(self, name: str, genre: str, price: float, online: bool,
+                 multiplayer: bool, rating: float, release_date: int) -> None:
         self.name = name
         self.genre = genre
         self.price = price
+        self.online = online
+        self.multiplayer = multiplayer
         self.rating = rating
         self.release_date = release_date
         self.tributes = []
@@ -78,7 +85,8 @@ class RecommendedGamesNetwork:
         self._games = {}
         self.max_tributes = 0
 
-    def add_game_by_info(self, name: str, genre: str, price: float, rating: float, release_date: int) -> None:
+    def add_game_by_info(self, name: str, genre: str, price: float, rating: float, online: bool,
+                         multiplayer: bool, release_date: int) -> None:
         """Add a game with the given name, score, and rating in the network.
 
         The new game is not adjacent to any other existing games.
@@ -86,7 +94,7 @@ class RecommendedGamesNetwork:
         Preconditions:
         - name not in self._games
         """
-        self._games[name] = Game(name, genre, price, rating, release_date)
+        self._games[name] = Game(name, genre, price, rating, online, multiplayer, release_date)
         self.num_games += 1
 
     def add_game(self, game: Game) -> None:
