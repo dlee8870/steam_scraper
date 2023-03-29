@@ -10,7 +10,7 @@ def get_reviews_response(appid: int, params: dict[str, Any]) -> requests.models.
     return response.json()
 
 
-def get_n_reviews(appid: int = 1172380, n: int = 5):
+def get_n_reviews(appid: int, n: int) -> list[dict]:
     """Return a list of reviews of appid where each review is a dictionary containing metadata around the review.
     There are n reviews, sorted by the most helpful.
     """

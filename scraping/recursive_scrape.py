@@ -6,11 +6,11 @@ import reviews_from_game
 
 class User:
     profile_id: str | int
+    similar_games: list[dict]
 
-    def __init__(self, profile_id: str | int):
+    def __init__(self, profile_id: str | int) -> None:
         if isinstance(profile_id, str):
             self.profile_id = convert_to_64bit(profile_id)
-
         else:
             self.profile_id = profile_id
 
@@ -25,4 +25,4 @@ def convert_to_64bit(profile_id: str = 'star_19642') -> int:
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
     converted = soup.find('input', {'id': 'results_steamid64'})
-    return converted['value']
+    return int(converted['value'])
