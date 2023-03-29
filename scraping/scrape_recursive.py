@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-import games_from_profile
-import reviews_from_game
+import scrape_games
+import scrape_reviews
 
 
 class User:
@@ -15,9 +15,9 @@ class User:
             self.profile_id = profile_id
 
     def scrape_similar(self):
-        topn = games_from_profile.top_n_played(self.profile_id, 10)
+        topn = scrape_games.top_n_played(self.profile_id, 10)
         for t in topn:
-            reviews_from_game.get_n_reviews(t['appid'], 5)
+            scrape_reviews.get_n_reviews(t['appid'], 5)
 
 
 def convert_to_64bit(profile_id: str = 'star_19642') -> int:

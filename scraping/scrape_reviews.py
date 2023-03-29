@@ -1,8 +1,7 @@
 import requests
-from typing import Any
 
 
-def get_reviews_response(appid: int, params: dict[str, Any]) -> requests.models.Response.json:
+def get_reviews_response(appid: int, params: dict) -> requests.models.Response.json:
     """Return the json of the game review page
     """
     url = 'https://store.steampowered.com/appreviews/'
