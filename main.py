@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 import steamscraper.steamscraper as scraper
 from queue import Queue
 import math
@@ -40,15 +39,13 @@ class Game:
         self.recommended_games = {}
 
     def update_game_likeability(self, max_tributes: int) -> None:
-        """Updates game instance attribute likeability
+        """Updates game instance attribute likeability.
 
         likeability is scored based on:
             - tributes
             - ratings
             - tributes weight
-
         """
-
         tribute_score = len(self.tributes) / max_tributes
 
         accumulated_weight = 0
@@ -81,8 +78,7 @@ class RecommendedGamesNetwork:
         self._games = {}
         self.max_tributes = 0
 
-
-    def add_game_by_info(self, name: str, genre: str, price: float, rating: float) -> None:
+    def add_game_by_info(self, name: str, genre: str, price: float, rating: float, release_date: int) -> None:
         """Add a game with the given name, score, and rating in the network.
 
         The new game is not adjacent to any other existing games.
@@ -90,8 +86,7 @@ class RecommendedGamesNetwork:
         Preconditions:
         - name not in self._games
         """
-
-        self._games[name] = Game(name, genre, price, rating)
+        self._games[name] = Game(name, genre, price, rating, release_date)
         self.num_games += 1
 
     def add_game(self, game: Game) -> None:
@@ -129,8 +124,8 @@ class RecommendedGamesNetwork:
         recommended_game.tributes.append(init_game)
 
         #  Updating tributes attribute for recommended game
-        recommended_game.tributes += 1
-        self.max_tributes = max(self.max_tributes, recommended_game.tributes)
+        #  recommended_game.tributes += 1
+        self.max_tributes = max(self.max_tributes, len(recommended_game.tributes))
 
     def get_recommendations(self, game: str) -> set[Game]:
         """Return the set of games recommended by game.
@@ -175,7 +170,6 @@ class RecommendedGamesNetwork:
             - ratings
             - tributes weight
         """
-
         for game in self._games.values():
             game.update_game_likeability(self.max_tributes)
 
@@ -215,7 +209,7 @@ def create_game_recommendation_network(user_games: list[Game],
     return network
 
 
-#  TODO: This function will be used in the desicion tree when we get the user's preference
+#  TODO: This function will be used in the decision tree when we get the user's preference
 def price_similarity(init_game_price: float, recommended_game_price: float) -> float:
     """Return a similarity score between 0 and 1, inclusive, given the price of a game
     and a recommended game.

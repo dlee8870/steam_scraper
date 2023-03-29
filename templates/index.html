@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'style.css') }}">
+    <title>Steam Waiter</title>
+</head>
+<body>
+    <h1>Welcome to Steam Waiter: Serving Your Game</h1>
+    <p>Please enter your preferences below:</p>
+
+    <form action="/recommendations" method="POST">
+        <label for="input_type">Choose input type:</label>
+        <select id="input_type" name="input_type">
+			<option value="none">None Selected</option>
+            <option value="steam_id">Steam ID</option>
+            <option value="game_list">List of Games</option>
+        </select><br><br>
+
+        <div id="steam_id_input" style="display: none;">
+            <label for="steam_id">Enter Your Steam ID:</label>
+            <input type="text" id="steam_id" name="steam_id"><br><br>
+        </div>
+
+        <div id="game_list_input" style="display: none;">
+            <label for="game_list">Enter Your List of Games:</label>
+            <input type="text" id="game_list" name="game_list"><br><br>
+        </div>
+
+        <button type="submit">Get Recommendations</button>
+    </form>
+    <script src="{{ url_for('static', filename= 'script.js') }}"></script>
+</body>
+</html>
