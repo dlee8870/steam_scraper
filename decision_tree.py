@@ -1,6 +1,5 @@
 from __future__ import annotations
 from tkinter import *
-from tkinter import ttk
 
 
 class DecisionTree:
