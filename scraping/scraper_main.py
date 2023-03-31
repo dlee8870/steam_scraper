@@ -5,12 +5,12 @@ from scrape_reviews import scrape_reviews
 import pandas as pd
 
 
-class UserScrape:
-    """A class representing the root user to start from, with the specified scraping settings.
+class Scraper:
+    """A class representing the scraper settings.
     ...
     """
-    profile_id: str | int
-    games: list[dict]
+    root_profile_id: str | int
+    root_games: list[dict]
     n: int  # Determines how many games to scrape from this user.
     recurse_n: int  # Determines how many games to scrape from other users
     d: int  # Depth of recursion, the smaller, the more "similar"
@@ -24,11 +24,12 @@ class UserScrape:
         self.d = d
 
     def scrape(self):
-        games = scrape_games(self.profile_id, self.n)
-        scrape_recursive_games(games)
+        starting_games = scrape_games(self.profile_id, self.n)
+        scrape_recursive(starting_games)
 
 
-def scrape_recursive_games(games: list[dict]):
+def scrape_recursive(games: list[dict]):
+    scrape_games()
     for game in games:
         ...
 
