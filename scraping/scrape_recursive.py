@@ -1,7 +1,7 @@
 import requests
+import pandas as pd
 from bs4 import BeautifulSoup
 import scrape_games
-import scrape_reviews
 
 
 class User:
@@ -15,9 +15,9 @@ class User:
             self.profile_id = profile_id
 
     def scrape_similar(self):
-        topn = scrape_games.top_n_played(self.profile_id, 10)
-        for t in topn:
-            scrape_reviews.get_n_reviews(t['appid'], 5)
+        top_n = scrape_games.top_n_played(self.profile_id, 10)
+        df = pd.DataFrame(top_n)
+        df.to_csv('top_n_played.csv')
 
 
 def convert_to_64bit(profile_id: str = 'star_19642') -> int:

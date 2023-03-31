@@ -1,7 +1,7 @@
 import requests
 
 
-def get_reviews_response(appid: int, params: dict) -> requests.models.Response.json:
+def get_json_response(appid: int, params: dict) -> requests.models.Response.json:
     """Return the json of the game review page
     """
     url = 'https://store.steampowered.com/appreviews/'
@@ -9,9 +9,8 @@ def get_reviews_response(appid: int, params: dict) -> requests.models.Response.j
     return response.json()
 
 
-def get_n_reviews(appid: int, n: int) -> list[dict]:
-    """Return a list of reviews of appid where each review is a dictionary containing metadata around the review.
-    There are n reviews, sorted by the most helpful.
+def get_reviews(app_id: int, n: int) -> list[dict]:
+    """Return a list of n reviews (with corresponding metadata) corresponding to the app_id.
     """
     reviews = []
     cursor = '*'
@@ -29,7 +28,7 @@ def get_n_reviews(appid: int, n: int) -> list[dict]:
         params['num_per_page'] = min(100, n)
         n -= 100
 
-        response = get_reviews_response(appid, params)
+        response = get_json_response(app_id, params)
         cursor = response['cursor']
         reviews += response['reviews']
 
