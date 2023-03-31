@@ -94,7 +94,7 @@ class RecommendedGamesNetwork:
         Preconditions:
         - name not in self._games
         """
-        self._games[name] = Game(name, genre, price, rating, online, multiplayer, release_date)
+        self._games[name] = Game(name, genre, price, online, multiplayer, rating, release_date)
         self.num_games += 1
 
     def add_game(self, game: Game) -> None:
