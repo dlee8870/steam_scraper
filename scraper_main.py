@@ -46,14 +46,67 @@ class Scraper:
         self.depth = depth
 
     def scrape(self):
-        root_games = scrape_app_ids(self.root_profile_id, self.n)
-        scrape_recursive(root_games)
+        root_games = scrape_app_ids(self.root_profile_id, self.n)  # set of app_ids
+        return scrape_recursive(root_games)
 
 
-def scrape_recursive(games: list[dict]):
-    scrape_games()
-    for game in games:
-        ...
+def scrape_recursive(games: set[int]) -> set[int, dict]:
+    ...  # Ahmed and Chris?
+
+
+def get_game_data(app_id: int) -> dict:
+    """Scrape game data from the Steam store given an app id.
+
+    Preconditions:
+    - app_id corresponds to an existing game on the Steam platform.
+
+    >>> get_game_data(400)
+    {'name': 'Portal', 'genres': ['Puzzle', 'Puzzle Platformer', 'First-Person', '3D Platformer', 'Singleplayer',\
+ 'Sci-fi', 'Comedy', 'Female Protagonist', 'Funny', 'Physics', 'Action', 'Story Rich', 'Classic', 'Platformer',\
+ 'Science', 'Atmospheric', 'FPS', 'Dark Humor', 'Short', 'Adventure'], 'is_multiplayer': False,\
+ 'has_online_component': False, 'price': 'CDN$ 12.99', 'rating': ''}
+    """
+    url = f"https://store.steampowered.com/app/{app_id}/"
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # Get game name
+    name = soup.select_one("div.apphub_AppName").text.strip()
+
+    # Get game description
+    description = soup.find('div', {'class': 'game_description_snippet'}).text.strip()
+
+    # Get game genres
+    genres = [genre.text.strip() for genre in soup.select("a.app_tag")]
+
+    # Get game player modes (not foolproof)
+    is_multiplayer = 'multiplayer' in description.lower() or 'multi-player' in description.lower()
+
+    # Get game online component (not foolproof)
+    has_online_component = 'online' in description.lower()
+
+    # Get game price
+    price_section = soup.select_one("div.game_purchase_price")
+    price = ""
+    if price_section:
+        price = price_section.text.strip()
+
+    # Get game rating (This doesn't work yet)
+    # rating_section = soup.select_one("div.user_reviews_summary_row span.game_review_summary")
+    rating = ""
+    # if rating_section:
+    #     rating_text = rating_section["data-tooltip-text"]
+    #     rating = float(rating_text.replace('%', '').replace(',', ''))
+    #     rating = rating / 100
+
+    return {
+        "name": name,
+        "genres": genres,
+        "is_multiplayer": is_multiplayer,
+        "has_online_component": has_online_component,
+        "price": price,
+        "rating": rating
+    }
 
 
 def convert_to_64bit(profile_id: str) -> int:
@@ -73,7 +126,8 @@ if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': ['requests', 'bs4', 'scrape_games'],  # the names (strs) of imported modules
+        'extra-imports': ['requests', 'bs4', 'scrape_app_ids', 'scrape_profile_ids'],
+        # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })
