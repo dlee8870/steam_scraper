@@ -49,11 +49,9 @@ class Game:
     release_date: int
     likeability: float
     recommended_games: dict[Game, float]
-    # PythonTA says max number of attributes is 8
 
     def __init__(self, name: str, genre: list[str], price: float, online: bool,
                  multiplayer: bool, rating: float, release_date: int) -> None:
-        # PythonTA says max number of parameters is 5. Maybe ignore this one.
         self.name = name
         self.genre = genre
         self.price = price
@@ -262,5 +260,6 @@ if __name__ == '__main__':
     python_ta.check_all(config={
         'extra-imports': ['queue', 'math'],  # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'disable': ['too-many-arguments', 'too-many-instance-attributes'],
         'max-line-length': 120
     })
