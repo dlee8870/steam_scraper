@@ -10,7 +10,6 @@ Copyright and Usage Information
 This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 """
 
-import requests
 from bs4 import BeautifulSoup
 import requests
 
