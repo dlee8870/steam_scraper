@@ -76,11 +76,11 @@ def get_game_data(app_id: int) -> dict:
     Preconditions:
     - app_id corresponds to an existing game on the Steam platform.
 
-    >>> get_game_data(400)
-    {'name': 'Portal', 'genres': ['Puzzle', 'Puzzle Platformer', 'First-Person', '3D Platformer', 'Singleplayer',\
- 'Sci-fi', 'Comedy', 'Female Protagonist', 'Funny', 'Physics', 'Action', 'Story Rich', 'Classic', 'Platformer',\
- 'Science', 'Atmospheric', 'FPS', 'Dark Humor', 'Short', 'Adventure'], 'is_multiplayer': False,\
- 'has_online_component': False, 'price': 'CDN$ 12.99', 'rating': ''}
+    >>> get_game_data(1677740)
+    {'name': 'Stumble Guys', 'genres': ['Free to Play', 'Multiplayer', 'Action', 'Casual', '3D', '3D Platformer', \
+'Colorful', 'Family Friendly', 'Battle Royale', 'Cute', 'Cartoony', 'Racing', 'Character Customization', \
+'Massively Multiplayer', 'PvP', 'Nudity', 'Physics', 'Comedy', 'Funny', 'Indie'], 'is_multiplayer': True, \
+'has_online_component': True, 'price': 'Free', 'rating': 0.9, 'release_date': '2021'}
     """
     url = f"https://store.steampowered.com/app/{app_id}/"
     response = requests.get(url)
@@ -95,25 +95,53 @@ def get_game_data(app_id: int) -> dict:
     # Get game genres
     genres = [genre.text.strip() for genre in soup.select("a.app_tag")]
 
-    # Get game player modes (not foolproof)
-    is_multiplayer = 'multiplayer' in description.lower() or 'multi-player' in description.lower()
+    # Get game player modes
+    is_multiplayer = 'multiplayer' in description.lower() or 'multi-player' in description.lower() or \
+                     any('multiplayer' in tag.text.lower() for tag in soup.select('a.app_tag')) or \
+                     any('multi-player' in tag.text.lower() for tag in soup.select('a.app_tag'))
 
-    # Get game online component (not foolproof)
-    has_online_component = 'online' in description.lower()
+    # Get game online component
+    has_online_component = 'online' in description.lower() or 'online' in genres or \
+                           any('online' in tag.text.lower() for tag in soup.select('a.app_tag'))
 
     # Get game price
     price_section = soup.select_one("div.game_purchase_price")
-    price = ""
     if price_section:
         price = price_section.text.strip()
+    # If there is no price section, the game is free
+    else:
+        price = "Free"
 
-    # Get game rating (This doesn't work yet)
-    # rating_section = soup.select_one("div.user_reviews_summary_row span.game_review_summary")
-    rating = ""
-    # if rating_section:
-    #     rating_text = rating_section["data-tooltip-text"]
-    #     rating = float(rating_text.replace('%', '').replace(',', ''))
-    #     rating = rating / 100
+    # Get game rating
+    review_summary = soup.select_one("div.user_reviews_summary_row")
+    rating = 0.0
+    if review_summary:
+        overall_review = review_summary.select_one("span.game_review_summary").text.strip().replace(",", "")
+        if overall_review == 'Overwhelmingly Positive':
+            rating = 1.0
+        elif overall_review == 'Very Positive':
+            rating = 0.90
+        elif overall_review == 'Positive':
+            rating = 0.80
+        elif overall_review == 'Mostly Positive':
+            rating = 0.7
+        elif overall_review == 'Mixed':
+            rating = 0.5
+        elif overall_review == 'Mostly Negative':
+            rating = 0.4
+        elif overall_review == 'Negative':
+            rating = 0.3
+        elif overall_review == 'Very Negative':
+            rating = 0.2
+        else:
+            rating = 0.1
+
+    # Get game release year
+    release_date_section = soup.select_one("div.date")
+    if release_date_section:
+        release_year = release_date_section.text.strip()[-4:]
+    else:
+        release_year = ""
 
     return {
         "name": name,
@@ -121,7 +149,8 @@ def get_game_data(app_id: int) -> dict:
         "is_multiplayer": is_multiplayer,
         "has_online_component": has_online_component,
         "price": price,
-        "rating": rating
+        "rating": rating,
+        "release_date": release_year
     }
 
 
@@ -131,7 +160,6 @@ def convert_to_64bit(profile_id: str) -> int:
     soup = BeautifulSoup(response.text, 'html.parser')
     converted = soup.find('input', {'id': 'results_steamid64'})
     return int(converted['value'])
-
 
 # if __name__ == '__main__':
 #     import python_ta
