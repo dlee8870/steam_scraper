@@ -18,7 +18,23 @@ root.geometry("500x500")
 root.title("Welcome to Steam Waiter")
 
 input_pf = Entry(root, width=50)
-input_pf.pack()
+input_pf.place(relx=0.5, rely=0.2, anchor='n')
+
+def run_tkinter():
+    """Run the Tkinter application"""
+
+    label = Label(root, text="Enter Steam Profile", font=('Arial', 18))
+    label.place(rely=0.1, relx=0.34)
+
+    # Enter button to input data
+    button = Button(root, text='Find games!', font=('Arial', 18), command=store_data)
+    button.place(relx=0.37, rely=0.3)
+
+    # Default text in the input box
+    input_pf.insert(0, "Enter info here")
+
+    # Run the window
+    root.mainloop()
 
 
 def store_data():
@@ -26,21 +42,6 @@ def store_data():
     steam_id = input_pf.get()
 
     # Perhaps call functions to create decision tree
-
-    label = Label(root, text="Enter Steam Profile", font=('Arial', 18))
-    label.pack()
-    label = Label(root, text="Enter Steam Profile", font=('Arial', 18))
-    label.pack()
-
-    # Enter button to input data
-    button = Button(root, text='Enter', font=('Arial', 18), command=store_data)
-    button.pack(pady=10)
-
-    # Default text in the input box
-    input_pf.insert(0, "Enter info here")
-
-    # Run the window
-    root.mainloop()
 
 
 if __name__ == '__main__':
