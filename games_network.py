@@ -26,14 +26,21 @@ class Game:
     - multiplayer: Whether there is a multiplayer option
     - rating: Rating for this game
     - tributes: A list of games that have a directed edge pointing to this game
-    - release_date: Release date of the game
+    - release_date: Release year of the game
     - likeability: A score representing the likeability of this game
     - recommended_games: Each key represents a recommended game from this game and an associated value.
                             This value, also known as the weight of the connection/edge, represents the percentage
                             of reviewers who play this game that recommended the other game.
+
+    Representation Invariants:
+    - self.name != ''
+    - self.price >= 0
+    - self.rating >= 0
+    - self.release_date >= 0
+    - self.likeability >= 0
     """
     name: str
-    genre: str
+    genre: list[str]
     price: float
     online: bool
     multiplayer: bool
@@ -44,7 +51,7 @@ class Game:
     recommended_games: dict[Game, float]
     # PythonTA says max number of attributes is 8
 
-    def __init__(self, name: str, genre: str, price: float, online: bool,
+    def __init__(self, name: str, genre: list[str], price: float, online: bool,
                  multiplayer: bool, rating: float, release_date: int) -> None:
         # PythonTA says max number of parameters is 5. Maybe ignore this one.
         self.name = name
@@ -60,6 +67,9 @@ class Game:
 
     def update_game_likeability(self, max_tributes: int) -> None:
         """Updates game instance attribute likeability.
+
+        Preconditions:
+        - max_tributes >= 0
 
         likeability is scored based on:
             - tributes
@@ -81,6 +91,10 @@ class Game:
 class RecommendedGamesNetwork:
     """A directed graph where each vertex represents a game object and each directed edge represents a
         recommendation.
+
+    Representation Invariants:
+    - self.num_games >= 0
+    - self.max_tributes >= 0
     """
     # Public Instance Attributes
     #   - num_games: The number of games in the network.
@@ -98,7 +112,7 @@ class RecommendedGamesNetwork:
         self._games = {}
         self.max_tributes = 0
 
-    def add_game_by_info(self, name: str, genre: str, price: float, rating: float, online: bool,
+    def add_game_by_info(self, name: str, genre: list[str], price: float, rating: float, online: bool,
                          multiplayer: bool, release_date: int) -> None:
         """Add a game with the given name, score, and rating in the network.
 
