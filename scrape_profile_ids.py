@@ -25,8 +25,8 @@ def get_json_response(app_id: int, params: dict) -> requests.models.Response.jso
     return response.json()
 
 
-def scrape_profile_ids(app_id: int, n: int) -> set[int]:
-    """Return a set of n profile ids corresponding to reviews (sorted by helpfulness) corresponding to the app_id.
+def scrape_profile_ids(app_id: int, n: int) -> list[int]:
+    """Return a list of n profile ids corresponding to reviews (sorted by helpfulness) corresponding to the app_id.
 
     Preconditions:
         - n >= 0
@@ -54,7 +54,7 @@ def scrape_profile_ids(app_id: int, n: int) -> set[int]:
         params['cursor'] = response['cursor'].encode()
         reviews += response['reviews']
 
-    return {review['author']['steamid'] for review in reviews}
+    return [review['author']['steamid'] for review in reviews]
 
 
 if __name__ == '__main__':

@@ -55,7 +55,7 @@ class Scraper:
 
 
 def scrape_recursive(profile_id: int, n: int, d: int) -> set[int]:
-    """...
+    """Returns a set of the app ids of the n most played games (in minutes) for the user corresponding to profile_id.
     """
     if d == 0:
         return scrape_app_ids(profile_id, n)
