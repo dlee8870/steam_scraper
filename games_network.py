@@ -194,8 +194,7 @@ class RecommendedGamesNetwork:
             game.update_game_likeability(self.max_tributes)
 
 
-def create_game_recommendation_network(user_games: list[Game],
-                                       num_recommendations: int = 10000) -> RecommendedGamesNetwork:
+def create_recommendation_network(user_games: list[Game], num_recommendations: int = 10000) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
     returning a complete recommended game network
