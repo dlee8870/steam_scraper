@@ -14,26 +14,21 @@ def get_json_response(app_id: int, params: dict) -> requests.models.Response.jso
 def scrape_reviews(app_id: int, n: int) -> list[dict]:
     """Return a list of n reviews (with corresponding metadata) corresponding to the app_id.
     """
-    reviews = []
     params = {
         'json': 1,
-        'filter': 'all',
-        'language': 'all',
-        'day_range': 99999999999999999,  # all time
-        'review_type': 'all',
+        'filter': 'all', # sorted by helpfulness
+        'language': 'english',
+        'day_range': 101010101010101010101010101010,
+        'cursor': '*'.encode(),  # Explanation of cursor is explained in offical documentation (start of file)
+        'review_type': 'positive',
         'purchase_type': 'all',
-        'cursor': '*'
+        'num_per_page': 100
     }
-
-    while n > 0:  # Explanation of cursor is explained in documentation above (start of file)
-        params['cursor'] = params['cursor'].encode()
-        params['num_per_page'] = min(100, n)
+    reviews = []
+    while n > 0:
+        params['num_per_page'] = min(n, 100)  # each response cursor yields at most 100 reviews
         n -= 100
-
         response = get_json_response(app_id, params)
+        params['cursor'] = response['cursor'].encode()
         reviews += response['reviews']
-        #
-        # if len(response['reviews']) < 100:
-        #     break
-
     return reviews
