@@ -15,6 +15,7 @@ import requests
 
 def get_json_response(app_id: int, params: dict) -> requests.models.Response.json:
     """Return the JSON response of the game reviews page
+    Note: API skips age checks and violence warnings.
 
     Preconditions:
         - app_id corresponds to a game on Steam
