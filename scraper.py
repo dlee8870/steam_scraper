@@ -21,37 +21,53 @@ class Scraper:
 
     Instance Attributes
     - root_profile_id:
-        The user's profile_id.
+        The starting profile_id (64 bit). Games recommended will be similar to the games in this profile.
     - n:
         The number of games to scrape from this profile.
     - recurse_n:
         Determines how many games to scrape from other profiles.
-    - depth:
+    - d:
         The depth of recursion; the smaller, the more similar the scraped games will be.
 
     Representation Invariants:
     - not(self.root_profile_id is None and self.root_games is None)
+    - root_profile_id must be public and more specifically, the games list must be accessible
     """
     root_profile_id: str | int
     n: int
     recurse_n: int
-    depth: int
+    d: int
 
-    def __init__(self, root_profile_id: str | int, n: int, depth: int) -> None:
+    def __init__(self, root_profile_id: str | int, n: int, d: int) -> None:
+        """...
+        """
         if isinstance(root_profile_id, str):
             self.root_profile_id = convert_to_64bit(root_profile_id)
         else:
             self.root_profile_id = root_profile_id
         self.n = n
-        self.depth = depth
+        self.d = d
 
     def scrape(self):
-        root_games = scrape_app_ids(self.root_profile_id, self.n)  # set of app_ids
-        return scrape_recursive(root_games)
+        """...
+        """
+        return scrape_recursive(self.root_profile_id, self.n, self.d)
 
 
-def scrape_recursive(games: set[int]) -> set[int, dict]:
-    ...  # Ahmed and Chris?
+def scrape_recursive(profile_id: int, n: int, d: int) -> set[int]:
+    """...
+    """
+    if d == 0:
+        return scrape_app_ids(profile_id, n)
+    else:
+        app_ids = scrape_app_ids(profile_id, n)
+
+        for app_id in app_ids:
+            profile_ids = scrape_profile_ids(app_id, n)
+            for profile_id in profile_ids:
+                app_ids = app_ids.union(scrape_recursive(profile_id, n, d - 1))
+
+        return app_ids
 
 
 def get_game_data(app_id: int) -> dict:
@@ -117,17 +133,17 @@ def convert_to_64bit(profile_id: str) -> int:
     return int(converted['value'])
 
 
-if __name__ == '__main__':
-    import python_ta
-    import python_ta.contracts
-
-    import doctest
-
-    doctest.testmod()
-
-    python_ta.check_all(config={
-        'extra-imports': ['requests', 'bs4', 'scrape_app_ids', 'scrape_profile_ids'],
-        # the names (strs) of imported modules
-        'allowed-io': [],  # the names (strs) of functions that call print/open/input
-        'max-line-length': 120
-    })
+# if __name__ == '__main__':
+#     import python_ta
+#     import python_ta.contracts
+#
+#     import doctest
+#
+#     doctest.testmod()
+#
+#     python_ta.check_all(config={
+#         'extra-imports': ['requests', 'bs4', 'scrape_app_ids', 'scrape_profile_ids'],
+#         # the names (strs) of imported modules
+#         'allowed-io': [],  # the names (strs) of functions that call print/open/input
+#         'max-line-length': 120
+#     })
