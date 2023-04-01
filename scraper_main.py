@@ -1,8 +1,18 @@
+"""CSC111 Final Project: Steam Waiter
+
+Module Description
+===============================
+This module contains necessary code to scrape relevant information about games
+on the Steam platform.
+
+Copyright and Usage Information
+===============================
+This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
+"""
+
 import requests
 from bs4 import BeautifulSoup
 from scrape_games import scrape_games
-from scrape_reviews import scrape_reviews
-import pandas as pd
 
 
 class Scraper:
@@ -40,3 +50,17 @@ def convert_to_64bit(profile_id: str) -> int:
     soup = BeautifulSoup(response.text, 'html.parser')
     converted = soup.find('input', {'id': 'results_steamid64'})
     return int(converted['value'])
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+
+    import doctest
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': [],  # the names (strs) of imported modules
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })
