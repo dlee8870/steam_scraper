@@ -1,5 +1,16 @@
+"""CSC111 Final Project: Steam Waiter
+
+Module Description
+===============================
+This module contains code that creates a decision tree that outputs
+personalized recommendations to a user.
+
+Copyright and Usage Information
+===============================
+This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
+"""
+
 from __future__ import annotations
-from tkinter import *
 
 
 class DecisionTree:
@@ -26,16 +37,15 @@ class DecisionTree:
     """
 
 
-def display_decision_tree():
-    """Displays a pop-up window with the decision tree"""
-    # Create the pop-up window
-    window = Tk()
-    window.title("Decision Tree")
-    window.geometry("500x500")
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
 
-    # Run the window
-    window.mainloop()
+    import doctest
+    doctest.testmod()
 
-
-# Call the function to display the pop-up window
-display_decision_tree()
+    python_ta.check_all(config={
+        'extra-imports': [],  # the names (strs) of imported modules
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })

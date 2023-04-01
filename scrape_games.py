@@ -1,3 +1,15 @@
+"""CSC111 Final Project: Steam Waiter
+
+Module Description
+===============================
+This module contains necessary code to scrape relevant information about games
+on the Steam platform.
+
+Copyright and Usage Information
+===============================
+This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
+"""
+
 import requests
 
 
@@ -17,3 +29,17 @@ def scrape_games(profile_id: int, n: int) -> list[dict]:
     games_by_playtime = sorted(games, key=lambda g: g['playtime_forever'], reverse=True)
 
     return games_by_playtime[0:n]
+
+
+if __name__ == '__main__':
+    import python_ta
+    import python_ta.contracts
+
+    import doctest
+    doctest.testmod()
+
+    python_ta.check_all(config={
+        'extra-imports': [],  # the names (strs) of imported modules
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })
