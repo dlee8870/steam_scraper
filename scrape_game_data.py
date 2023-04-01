@@ -10,6 +10,7 @@ Copyright and Usage Information
 This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 """
 
+import requests
 from bs4 import BeautifulSoup
 import requests
 
@@ -24,7 +25,11 @@ def get_game_data(app_id: int) -> dict:
     {'name': 'Stumble Guys', 'genres': ['Free to Play', 'Multiplayer', 'Action', 'Casual', '3D', '3D Platformer', \
 'Colorful', 'Family Friendly', 'Battle Royale', 'Cute', 'Cartoony', 'Racing', 'Character Customization', \
 'Massively Multiplayer', 'PvP', 'Nudity', 'Physics', 'Comedy', 'Funny', 'Indie'], 'is_multiplayer': True, \
-'has_online_component': True, 'price': 'Free', 'rating': 0.9, 'release_date': '2021'}
+'has_online_component': True, 'price': 0, 'rating': 0.9, 'release_date': '2021'}
+
+    >>> get_game_data(1023940)
+    {'name': 'VR-CPR Personal Edition', 'genres': ['Education', 'Software Training', 'VR'], \
+'is_multiplayer': False, 'has_online_component': False, 'price': 135.99, 'rating': 0.1, 'release_date': '2019'}
     """
     url = f"https://store.steampowered.com/app/{app_id}/"
     response = requests.get(url)
@@ -52,9 +57,15 @@ def get_game_data(app_id: int) -> dict:
     price_section = soup.select_one("div.game_purchase_price")
     if price_section:
         price = price_section.text.strip()
+        # Strip any dollar signs and currency symbols
+        price = ''.join(filter(str.isdigit, price))
+        if price:
+            price = float(price) / 100
+        else:
+            price = 0
     # If there is no price section, the game is free
     else:
-        price = "Free"
+        price = 0
 
     # Get game rating
     review_summary = soup.select_one("div.user_reviews_summary_row")
@@ -107,8 +118,9 @@ if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': ['bs4'],
+        'extra-imports': ['bs4', 'requests'],
         # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'disable': ['too-many-branches', 'too-many-locals'],
         'max-line-length': 120
     })
