@@ -1,9 +1,7 @@
 """CSC111 Final Project: Steam Waiter
-
 Module Description
 ===============================
 This module contains necessary code to run our entire program.
-
 Copyright and Usage Information
 ===============================
 This file is Copyright (c) 2023 Chris Oh, Ahmed Hassini, Andy Zhang, Daniel Lee
