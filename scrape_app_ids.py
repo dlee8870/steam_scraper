@@ -33,11 +33,11 @@ def scrape_app_ids(profile_id: int, n: int) -> set[int]:
         - n > 0
     """
     json_response = get_json_response(profile_id)
+
     if not json_response:
         return set()
 
     games = json_response['games']
-
     games_by_playtime = sorted(games, key=lambda g: g['playtime_forever'], reverse=True)
 
     return {games_by_playtime[i]['appid'] for i in range(n)}

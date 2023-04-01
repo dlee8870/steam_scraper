@@ -52,6 +52,7 @@ def scrape_profile_ids(app_id: int, n: int) -> set[int]:
         response = get_json_response(app_id, params)
         params['cursor'] = response['cursor'].encode()
         reviews += response['reviews']
+
     return {review['author']['steamid'] for review in reviews}
 
 
