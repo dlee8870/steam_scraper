@@ -11,6 +11,7 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 """
 
 from bs4 import BeautifulSoup
+import requests
 
 
 def get_game_data(app_id: int) -> dict:
