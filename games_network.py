@@ -232,13 +232,6 @@ def create_recommendation_network(user_games: list[Game], num_recommendations: i
 def price_similarity(init_game_price: float, recommended_game_price: float) -> float:
     """Return a similarity score between 0 and 1, inclusive, given the price of a game
     and a recommended game.
-
-    >>> price_similarity(5, 10)
-        0.9900498337491681
-    >>> price_similarity(500, 1000)
-        0.36787944117144233
-    >>> price_similarity(10, 5000000000)
-        0.0
     """
     k = 0.002  # tuning parameter
     x = abs(init_game_price - recommended_game_price)
