@@ -25,17 +25,17 @@ class Scraper:
     recurse_n: int  # Determines how many games to scrape from other users
     d: int  # Depth of recursion, the smaller, the more "similar"
 
-    def __init__(self, profile_id: str | int, n: int, d: int) -> None:
+    def __init__(self, root_profile_id: str | int, n: int, d: int) -> None:
         # Andy do you mean root_profile_id here
-        if isinstance(profile_id, str):
-            self.profile_id = convert_to_64bit(profile_id)
+        if isinstance(root_profile_id, str):
+            self.root_profile_id = convert_to_64bit(root_profile_id)
         else:
-            self.profile_id = profile_id
+            self.root_profile_id = root_profile_id
         self.n = n
         self.d = d
 
     def scrape(self):
-        starting_games = scrape_games(self.profile_id, self.n)
+        starting_games = scrape_games(self.root_profile_id, self.n)
         scrape_recursive(starting_games)
 
 
