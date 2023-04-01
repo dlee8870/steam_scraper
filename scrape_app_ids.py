@@ -20,13 +20,14 @@ def get_json_response(params: dict) -> requests.models.Response.json:
         - the profile is public
     """
     url = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
-    response = requests.get(url=url, params=params)
+    response = requests.get(url, params)
     return response.json()['response']
 
 
 def scrape_app_ids(profile_id: int, n: int) -> list[int]:
-    """Returns a list of the app ids of the n most played games (in minutes) for the user corresponding to profile_id.
-    Return an empty list if they have hidden game details. If they have less than n games, return all the games.
+    """Returns a list of the user's n most played games (in minutes).
+    Return an empty list if the user has hidden game details.
+    If the user has less than n games, return all the games they have.
 
     Preconditions:
         - len(profile_id) == 17

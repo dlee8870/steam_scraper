@@ -21,12 +21,12 @@ def get_json_response(app_id: int, params: dict) -> requests.models.Response.jso
         - app_id corresponds to a game on Steam
     """
     url = 'https://store.steampowered.com/appreviews/'
-    response = requests.get(url=url + str(app_id), params=params)
+    response = requests.get(url + str(app_id), params)
     return response.json()
 
 
 def scrape_profile_ids(app_id: int, n: int) -> list[int]:
-    """Return a list of n profile ids corresponding to reviews (sorted by helpfulness) corresponding to the app_id.
+    """Return a list of the users corresponding to the top n most helpful reviews of the game.
 
     Preconditions:
         - n >= 0
@@ -36,10 +36,10 @@ def scrape_profile_ids(app_id: int, n: int) -> list[int]:
     """
     params = {
         'json': 1,
-        'filter': 'all',  # sorted by helpfulness
+        'filter': 'all',
         'language': 'english',
         'day_range': 101010101010101010101010101010,
-        'cursor': '*'.encode(),  # Explanation of cursor is explained in offical documentation (start of file)
+        'cursor': '*'.encode(),
         'review_type': 'positive',
         'purchase_type': 'all',
         'num_per_page': 100

@@ -17,7 +17,7 @@ from scrape_profile_ids import scrape_profile_ids
 
 
 class Scraper:
-    """A class representing the scraper settings.
+    """A class representing the user initialized scraper settings.
 
     Instance Attributes
     - root_profile_id:
@@ -54,8 +54,8 @@ class Scraper:
         return scrape_recursive(self.root_profile_id, self.n, self.d)
 
 
-def scrape_recursive(profile_id: int, n: int, d: int) -> set[int]:
-    """Returns a set of the app ids of the n most played games (in minutes) for the user corresponding to profile_id.
+def scrape_recursive(profile_id: int, n: int, d: int) -> list[int]:
+    """Returns a list of the n most played games (in minutes) for the user corresponding to profile_id.
     """
     if d == 0:
         return scrape_app_ids(profile_id, n)
@@ -68,6 +68,16 @@ def scrape_recursive(profile_id: int, n: int, d: int) -> set[int]:
                 app_ids = app_ids.union(scrape_recursive(profile_id, n, d - 1))
 
         return app_ids
+
+
+def convert_to_64bit(profile_id: str) -> int:
+    url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/'
+    params = {
+        'key': '4957E3F30616447A483A7DBA9F26172E',
+        'vanityurl': profile_id
+    }
+    response = requests.get(url, params).json()
+    return int(response['response']['steamid'])
 
 
 def get_game_data(app_id: int) -> dict:
@@ -152,14 +162,6 @@ def get_game_data(app_id: int) -> dict:
         "rating": rating,
         "release_date": release_year
     }
-
-
-def convert_to_64bit(profile_id: str) -> int:
-    url = f'https://steamid.net/?q={profile_id}'
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    converted = soup.find('input', {'id': 'results_steamid64'})
-    return int(converted['value'])
 
 # if __name__ == '__main__':
 #     import python_ta
