@@ -4,6 +4,7 @@ Module Description
 ===============================
 This module contains necessary code to scrape relevant information about games
 on the Steam platform.
+Main documentation utilized: https://partner.steamgames.com/doc/store/getreviews
 
 Copyright and Usage Information
 ===============================
@@ -12,8 +13,6 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 
 import requests
 
-
-# https://partner.steamgames.com/doc/store/getreviews
 
 def get_json_response(app_id: int, params: dict) -> requests.models.Response.json:
     """Return the JSON response of the game reviews page
@@ -28,7 +27,7 @@ def scrape_reviews(app_id: int, n: int) -> list[dict]:
     """
     params = {
         'json': 1,
-        'filter': 'all', # sorted by helpfulness
+        'filter': 'all',  # sorted by helpfulness
         'language': 'english',
         'day_range': 101010101010101010101010101010,
         'cursor': '*'.encode(),  # Explanation of cursor is explained in offical documentation (start of file)
@@ -51,6 +50,7 @@ if __name__ == '__main__':
     import python_ta.contracts
 
     import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={
