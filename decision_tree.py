@@ -11,6 +11,7 @@ This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
 """
 
 from __future__ import annotations
+import time
 from tkinter import *
 from games_network import *
 from typing import Optional, Any
@@ -30,7 +31,7 @@ class DecisionTree:
     Preset Questions:
         1. Genre
         2. Price
-        3. Release date
+        3. Release year
         4. Online component
         5. Multiplayer
 
@@ -88,8 +89,14 @@ class _Questions:
 
         self._get_genres()
 
-    def _next_question(self, frame: Frame, user_answer: Any, question_name: str) -> None:
+    def _next_question(self, frame: Frame, success_message: StringVar, user_answer: Any, question_name: str) -> None:
         """Transitions to the next question window"""
+        # Success message
+        response_label = Label(frame, textvariable=success_message, relief=FLAT)
+        response_label.pack(side=BOTTOM)
+        self.window.update()
+        time.sleep(1.5)
+
         # Clearing the screen
         frame.destroy()
 
@@ -100,50 +107,63 @@ class _Questions:
         if question_name == "Genre":
             self._get_price()
         elif question_name == "Price":
+            self._get_date()
+        elif question_name == "Date":
+            self._get_online()
+        elif question_name == "Online":
+            self._get_multiplayer()
+        elif question_name == "Multiplayer":
+            # Call decision tree here
             ...
 
-    def _add_genre(self, genre_entry: Entry, users_genres: set[str], frame: Frame, genres_left: IntVar) -> None:
+    def _add_genre(self, genre_entry: Entry, users_genres: set[str], suggestion_str: StringVar, frame: Frame,
+                   genres_left: IntVar, success_message: StringVar) -> None:
         """Tries to add genre from entry if the genre does not exist attempts to suggest a genre based on input
 
         Updates the genres_counter variable and mutates users_genres
 
         """
 
-        response_str = StringVar()
+        response_str = StringVar(value="")
         genre = genre_entry.get().lower()
         response_label = Label(frame, textvariable=response_str, relief=FLAT)
 
         if genre in users_genres:
             response_str.set(f'"{genre}" has already been selected, try another genre')
+            # Clear entry
+            genre_entry.delete(0, END)
         elif genre in self.genres:
             users_genres.add(genre)
             # Creates a label that shows for a short amount of time
             response_str.set(f'Successfully added "{genre}" as a preferred genre')
             self.genres_counter -= 1
+            success_message.set(value=f"Successfully added {5 - self.genres_counter} preferred genre(s)")
             genres_left.set(f"Genres left: {self.genres_counter}")
-        else:
+            # Clear entry
+            genre_entry.delete(0, END)
+        elif genre != "":
             # Tries to return the first relevant suggestion
-            genre_suggested = False
-
             for g in self.genres:
-                if genre in g:
-                    genre_suggested = True
-                    response_str.set(f'"{genre}" is not a valid genre did you mean {g}?')
+                if genre in g and g not in users_genres:
+                    response_str.set(f'"{genre}" is not a valid genre, did you mean {g}?')
+                    # Adding suggestion to entry
+                    suggestion_str.set(g)
+                    genre_entry.icursor(END)
+                    self.window.update()
                     break
 
-            # Otherwise sends error message
-            if not genre_suggested or genre == "":
-                response_str.set(f'"{genre}" is not a valid genre, please try again')
+        # Otherwise sends error message
+        if response_str.get() == "" or genre == "":
+            response_str.set(f'"{genre}" is not a valid genre, please try again')
+            genre_entry.delete(0, END)
 
         response_label.pack(side=BOTTOM)
-        response_label.after(2500, lambda: response_label.destroy())
-
-        # Clear entry
-        genre_entry.delete(0, END)
+        response_label.after(1500, lambda: response_label.destroy())
 
         # Ends question by genre limit reached
         if self.genres_counter == 0:
-            self._next_question(frame, users_genres, "Genre")
+            success_message = StringVar(value=f"Successfully added {5 - self.genres_counter} preferred genres")
+            self._next_question(frame, success_message, users_genres, "Genre")
 
     def _get_genres(self) -> None:
         """Gets the users perferred genres"""
@@ -170,28 +190,28 @@ class _Questions:
         # Search bar
         genre_label = Label(frame, text="Search for genres", font=('Helvetica bold', 14))
         genre_label.pack(side=TOP, pady=(175, 0))
-        genre_entry = Entry(frame, bd=3)
+        suggestion_str = StringVar()
+        suggestion_str.set("")
+        genre_entry = Entry(frame, bd=3, textvariable=suggestion_str)
         genre_entry.pack(side=TOP)
 
         # Enter button
         users_genres = set()
-        enter_button = Button(frame, text="Enter", command=lambda: self._add_genre(genre_entry, users_genres,
-                                                                                   frame, genres_left))
+        success_message = StringVar(value=f"Successfully added {5 - self.genres_counter} preferred genres")
+        enter_button = Button(frame, text="Enter",
+                              command=lambda: self._add_genre(
+                                  genre_entry, users_genres, suggestion_str, frame, genres_left, success_message))
         enter_button.pack(pady=(15, 0))
 
         # Ends question by button
-        next_button = Button(frame, text="Next Question", command=lambda: self._next_question(frame,
+        next_button = Button(frame, text="Next Question", command=lambda: self._next_question(frame, success_message,
                                                                                               users_genres, "Genre"))
-        next_button.pack(side=BOTTOM, pady=(160, 0))
+        next_button.pack(side=BOTTOM, pady=(165, 0))
 
         self.window.mainloop()
 
     def _add_price(self, price_entry: Entry, frame: Frame) -> None:
-        """Tries to add genre from entry if the genre does not exist attempts to suggest a genre based on input
-
-        Updates the genres_counter variable and mutates users_genres
-
-        """
+        """Tries to add price from entry"""
 
         # Catching errors when converting something that is not an integer
         try:
@@ -199,8 +219,12 @@ class _Questions:
             # Force ValueError for negatives
             if price < 0:
                 raise ValueError
-            self._next_question(frame, price, "Price")
+            else:
+                success_message = StringVar(value=f"Successfully added preferred price: {price}")
+                self._next_question(frame, success_message, price, "Price")
         except ValueError:
+            # Clear entry
+            price_entry.delete(0, END)
             response_str = StringVar()
             response_str.set("Invalid entry, please enter a positive number")
             response_label = Label(frame, textvariable=response_str, relief=FLAT)
@@ -231,9 +255,121 @@ class _Questions:
         price_entry.update()
 
         # Enter button
-        enter_button = Button(frame, text="Enter", command=lambda: self._next_question(frame,
-                                                                                       int(price_entry.get()), "Price"))
+        enter_button = Button(frame, text="Enter", command=lambda: self._add_price(price_entry,
+                                                                                   frame))
         enter_button.pack(pady=(15, 0))
+
+        self.window.mainloop()
+
+    def _add_date(self, date_entry: Entry, frame: Frame) -> None:
+        """Tries to add year
+        """
+
+        # Catching errors when converting something that is not an integer
+        try:
+            year = int(date_entry.get())
+            # Force ValueError for negatives
+            if 1980 <= year <= 2023:
+                success_message = StringVar(value=f"Successfully added preferred release year: {year}")
+                self._next_question(frame, success_message, year, "Date")
+            else:
+                raise ValueError
+        except ValueError:
+            # Clear entry
+            date_entry.delete(0, END)
+            response_str = StringVar()
+            response_str.set("Invalid entry, please enter a year between 1980 and 2023")
+            response_label = Label(frame, textvariable=response_str, relief=FLAT)
+            response_label.pack(side=BOTTOM)
+            response_label.after(2500, lambda: response_label.destroy())
+
+    def _get_date(self) -> None:
+        """Stores the users preferred release date"""
+
+        frame = Frame(self.window, width=500, height=600)
+        frame.pack()
+        self.window.title("Preferences")
+        self.window.geometry("500x600")
+        self.window.resizable(False, False)
+
+        # Question Label
+        question = StringVar()
+        label_question = Label(frame, textvariable=question, relief=FLAT)
+        label_question.config(font=('Helvetica bold', 26))
+        question.set("#3 Choose preferred release year")
+        label_question.pack(side=TOP)
+
+        # Search bar
+        date_label = Label(frame, text="Enter year", font=('Helvetica bold', 14))
+        date_label.pack(side=TOP, pady=(175, 0))
+        date_entry = Entry(frame, bd=3)
+        date_entry.pack(side=TOP)
+        date_entry.update()
+
+        # Enter button
+        enter_button = Button(frame, text="Enter", command=lambda: self._add_date(date_entry,
+                                                                                  frame))
+        enter_button.pack(pady=(15, 0))
+
+        self.window.mainloop()
+
+    def _get_online(self) -> None:
+        """Stores the users preferred release date"""
+
+        frame = Frame(self.window, width=500, height=600)
+        frame.pack()
+        self.window.title("Preferences")
+        self.window.geometry("500x600")
+        self.window.resizable(False, False)
+
+        # Question Label
+        question = StringVar()
+        label_question = Label(frame, textvariable=question, relief=FLAT)
+        label_question.config(font=('Helvetica bold', 26))
+        question.set("#4 Do you prefer online games")
+        label_question.pack(side=TOP)
+
+        # Yes button
+        online_message = StringVar(value="You prefer games that are online")
+        yes_button = Button(frame, text="Yes", command=lambda: self._next_question(frame,
+                                                                                   online_message, True, "Online"))
+        yes_button.pack(pady=(200, 0), side=LEFT)
+
+        # No button
+        offline_message = StringVar(value="You prefer games that are offline")
+        no_button = Button(frame, text="No", command=lambda: self._next_question(frame,
+                                                                                 offline_message, True, "Online"))
+        no_button.pack(pady=(200, 0), side=RIGHT)
+
+        self.window.mainloop()
+
+    def _get_multiplayer(self) -> None:
+        """Stores the users preferred release date"""
+
+        frame = Frame(self.window, width=500, height=600)
+        frame.pack()
+        self.window.title("Preferences")
+        self.window.geometry("500x600")
+        self.window.resizable(False, False)
+
+        # Question Label
+        question = StringVar()
+        label_question = Label(frame, textvariable=question, relief=FLAT)
+        label_question.config(font=('Helvetica bold', 26))
+        question.set("#5 Do you prefer multiplayer games")
+        label_question.pack(side=TOP)
+
+        # Yes button
+        online_message = StringVar(value="You prefer multiplayer games")
+        yes_button = Button(frame, text="Yes", command=lambda: self._next_question(frame,
+                                                                                   online_message, True, "Multiplayer"))
+        yes_button.pack(pady=(200, 0), side=LEFT)
+
+        # No button
+        offline_message = StringVar(value="You prefer multiplayer games")
+        no_button = Button(frame, text="No", command=lambda: self._next_question(frame,
+                                                                                 offline_message, True, "Multiplayer"))
+        no_button.pack(pady=(200, 0), side=RIGHT)
 
         self.window.mainloop()
 
@@ -264,7 +400,9 @@ def display_decision_tree():
 
 
 def displaying_results():
-    """Displays the results using tkinter"""
+    """Displays the results using tkinter with the scores out of 10.
+
+    """
 
 
 if __name__ == '__main__':

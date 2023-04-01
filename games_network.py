@@ -33,7 +33,7 @@ class Game:
                             of reviewers who play this game that recommended the other game.
     """
     name: str
-    genre: str
+    genres: set[str]
     price: float
     online: bool
     multiplayer: bool
@@ -44,7 +44,7 @@ class Game:
     recommended_games: dict[Game, float]
     # PythonTA says max number of attributes is 8
 
-    def __init__(self, name: str, genre: str, price: float, online: bool,
+    def __init__(self, name: str, genre: set[str], price: float, online: bool,
                  multiplayer: bool, rating: float, release_date: int) -> None:
         # PythonTA says max number of parameters is 5. Maybe ignore this one.
         self.name = name
@@ -98,7 +98,7 @@ class RecommendedGamesNetwork:
         self._games = {}
         self.max_tributes = 0
 
-    def add_game_by_info(self, name: str, genre: str, price: float, rating: float, online: bool,
+    def add_game_by_info(self, name: str, genre: set[str], price: float, rating: float, online: bool,
                          multiplayer: bool, release_date: int) -> None:
         """Add a game with the given name, score, and rating in the network.
 
