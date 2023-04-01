@@ -26,6 +26,7 @@ class Scraper:
     d: int  # Depth of recursion, the smaller, the more "similar"
 
     def __init__(self, profile_id: str | int, n: int, d: int) -> None:
+        # Andy do you mean root_profile_id here
         if isinstance(profile_id, str):
             self.profile_id = convert_to_64bit(profile_id)
         else:
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': [],  # the names (strs) of imported modules
+        'extra-imports': ['requests', 'bs4', 'scrape_games'],  # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })
