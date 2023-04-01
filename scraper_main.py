@@ -14,43 +14,40 @@ import requests
 from bs4 import BeautifulSoup
 from scrape_app_ids import scrape_app_ids
 from scrape_profile_ids import scrape_profile_ids
-from typing import Optional
 
 
 class Scraper:
     """A class representing the scraper settings.
+
     Instance Attributes
-    - address:
-        The address (i.e., unique identifier) of this node.
-        This replaces the "item" attribute in the _Vertex class from lecture.
-    - channels:
-        A mapping containing the channels for this node.
-        Each key in the mapping is the address of a neighbour node,
-        and the corresponding value is the channel leading to that node.
-        This replaces the "neighbours" attribute in the _Vertex class from lecture.
+    - root_profile_id:
+        The user's profile_id.
+    - n:
+        The number of games to scrape from this profile.
+    - recurse_n:
+        Determines how many games to scrape from other profiles.
+    - depth:
+        The depth of recursion; the smaller, the more similar the scraped games will be.
 
     Representation Invariants:
-    - self.address not in self.channels
-    - all(self in self.channels[addy].endpoints for addy in self.channels)
+    - not(self.root_profile_id is None and self.root_games is None)
     """
-    root_profile_id: Optional[str | int]
-    root_games: Optional[set[int]]  # set of game app_ids
-    n: int  # Determines how many games to scrape from this user.
-    recurse_n: int  # Determines how many games to scrape from other users
-    d: int  # Depth of recursion, the smaller, the more "similar"
+    root_profile_id: str | int
+    n: int
+    recurse_n: int
+    depth: int
 
-    def __init__(self, root_profile_id: str | int, n: int, d: int) -> None:
-        # Andy do you mean root_profile_id here
+    def __init__(self, root_profile_id: str | int, n: int, depth: int) -> None:
         if isinstance(root_profile_id, str):
             self.root_profile_id = convert_to_64bit(root_profile_id)
         else:
             self.root_profile_id = root_profile_id
         self.n = n
-        self.d = d
+        self.depth = depth
 
     def scrape(self):
-        starting_games = scrape_games(self.root_profile_id, self.n)
-        scrape_recursive(starting_games)
+        root_games = scrape_app_ids(self.root_profile_id, self.n)
+        scrape_recursive(root_games)
 
 
 def scrape_recursive(games: list[dict]):
