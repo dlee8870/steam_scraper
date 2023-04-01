@@ -12,15 +12,29 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 
 import requests
 from bs4 import BeautifulSoup
-from scrape_games import scrape_games
+from scrape_app_ids import scrape_app_ids
+from scrape_profile_ids import scrape_profile_ids
+from typing import Optional
 
 
 class Scraper:
     """A class representing the scraper settings.
-    ...
+    Instance Attributes
+    - address:
+        The address (i.e., unique identifier) of this node.
+        This replaces the "item" attribute in the _Vertex class from lecture.
+    - channels:
+        A mapping containing the channels for this node.
+        Each key in the mapping is the address of a neighbour node,
+        and the corresponding value is the channel leading to that node.
+        This replaces the "neighbours" attribute in the _Vertex class from lecture.
+
+    Representation Invariants:
+    - self.address not in self.channels
+    - all(self in self.channels[addy].endpoints for addy in self.channels)
     """
-    root_profile_id: str | int
-    root_games: list[dict]
+    root_profile_id: Optional[str | int]
+    root_games: Optional[set[int]]  # set of game app_ids
     n: int  # Determines how many games to scrape from this user.
     recurse_n: int  # Determines how many games to scrape from other users
     d: int  # Depth of recursion, the smaller, the more "similar"

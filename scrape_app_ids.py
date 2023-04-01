@@ -22,14 +22,14 @@ def get_json_response(profile_id: int) -> requests.models.Response.json:
     return response.json()
 
 
-def scrape_games(profile_id: int, n: int) -> list[dict]:
-    """Returns a list of the n most played games (in minutes) for the user corresponding to profile_id.
+def scrape_app_ids(profile_id: int, n: int) -> set[int]:
+    """Returns a set of the app ids of the n most played games (in minutes) for the user corresponding to profile_id.
     """
     games = get_json_response(profile_id)['response']['games']
 
     games_by_playtime = sorted(games, key=lambda g: g['playtime_forever'], reverse=True)
 
-    return games_by_playtime[0:n]
+    return {games_by_playtime[i]['appid'] for i in range(n)}
 
 
 def get_game_data(app_id: int) -> dict:
