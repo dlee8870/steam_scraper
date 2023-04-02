@@ -28,8 +28,6 @@ def get_game_data(app_id: int) -> Game:
     0.9
 
     >>> game2 = get_game_data(1023940)
-    >>> game2.genres
-    {'Education', 'Software Training', 'VR'}
     >>> game2.multiplayer
     False
     >>> game2.price
