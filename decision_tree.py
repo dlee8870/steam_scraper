@@ -18,6 +18,7 @@ from typing import Optional, Any
 
 QUESTIONS_TO_ANSWERS = []
 
+
 class DecisionTree:
     """A preset decision tree (binary tree) used to adjust scores of games from the RecommendedGameNetwork
 
@@ -85,9 +86,20 @@ class _Questions:
             line = file.readline()
 
     def ask_questions(self):
-        """Runs the chain of functions asking the user questions"""
+        """Runs the chain of functions asking the user questions as well as ranking priority of questions"""
 
         self._get_genres()
+
+    def _clear_window(self, frame: Frame, widgets: set[Any] | None):
+        """Clears the frame of the window
+        If there are extra widgets outside the frame it will erase them as well
+        """
+
+        frame.destroy()
+
+        if widgets is not None:
+            for widget in widgets:
+                widget.destroy()
 
     def _next_question(self, frame: Frame, success_message: StringVar, user_answer: Any, question_name: str) -> None:
         """Transitions to the next question window"""
@@ -98,7 +110,7 @@ class _Questions:
         time.sleep(1.5)
 
         # Clearing the screen
-        frame.destroy()
+        self._clear_window(frame, None)
 
         # Add answer to the list
         QUESTIONS_TO_ANSWERS.append((question_name, user_answer))
@@ -113,8 +125,7 @@ class _Questions:
         elif question_name == "Online":
             self._get_multiplayer()
         elif question_name == "Multiplayer":
-            # Call decision tree here
-            ...
+            self._rank_questions()
 
     def _add_genre(self, genre_entry: Entry, users_genres: set[str], suggestion_str: StringVar, frame: Frame,
                    genres_left: IntVar, success_message: StringVar) -> None:
@@ -366,12 +377,127 @@ class _Questions:
         yes_button.pack(pady=(200, 0), side=LEFT)
 
         # No button
-        offline_message = StringVar(value="You prefer multiplayer games")
+        offline_message = StringVar(value="You do not prefer multiplayer games")
         no_button = Button(frame, text="No", command=lambda: self._next_question(frame,
                                                                                  offline_message, True, "Multiplayer"))
         no_button.pack(pady=(200, 0), side=RIGHT)
 
         self.window.mainloop()
+
+    def _adjust_rank(self, curr_quest: StringVar, swap_quest: StringVar, index: int, up: bool):
+        """Adjusts the rank given the current index, either increases up by on or down by 1
+        if up is true swap with rank above
+        otherwise swap with the rank below
+
+        Mutates QUESTIONS_TO_ANSWERS
+        """
+
+        # Offset of change
+        if up:
+            offset = -1
+        else:
+            offset = 1
+
+        # Swapping questions
+        QUESTIONS_TO_ANSWERS[index], QUESTIONS_TO_ANSWERS[index + offset] = \
+            QUESTIONS_TO_ANSWERS[index + offset], QUESTIONS_TO_ANSWERS[index]
+        # Adjust labels
+        curr_quest.set(f"Rank {index + 1}: {QUESTIONS_TO_ANSWERS[index][0]}")
+        swap_quest.set(f"Rank {index + offset + 1}: {QUESTIONS_TO_ANSWERS[index + offset][0]}")
+        self.window.update()
+
+    def _rank_questions(self):
+        """Ranks the order of the questions, the higher the question the more important it is."""
+
+        self.window.title("Preferences")
+        self.window.geometry("500x600")
+        self.window.resizable(False, False)
+        frame = Frame(self.window)
+
+        # Question Label
+        question = StringVar()
+        label_question = Label(self.window, textvariable=question, relief=FLAT)
+        label_question.config(font=('Helvetica bold', 24))
+        question.set("Rank preferences by your priorities")
+        label_question.pack(side=TOP, pady=(10, 100))
+
+        frame.pack()
+
+        # Rank 1
+        question_rank_1 = StringVar()
+        label_rank_1 = Label(frame, textvariable=question_rank_1, relief=FLAT)
+        label_rank_1.config(font=('Helvetica bold', 18))
+        question_rank_1.set("Rank 1: " + QUESTIONS_TO_ANSWERS[0][0])
+        label_rank_1.grid(row=1, column=0, pady=10, padx=10)
+
+        # Up/Down buttons for rank 1
+        down_button_1 = Button(frame, text="⬇", command=lambda: self._adjust_rank(question_rank_1, question_rank_2,
+                                                                                  0, False))
+        down_button_1.grid(row=1, column=2, pady=10)
+
+        # Rank 2
+        question_rank_2 = StringVar()
+        label_rank_2 = Label(frame, textvariable=question_rank_2, relief=FLAT)
+        label_rank_2.config(font=('Helvetica bold', 18))
+        question_rank_2.set("Rank 2: " + QUESTIONS_TO_ANSWERS[1][0])
+        label_rank_2.grid(row=2, column=0, pady=10, padx=10)
+        # Up/Down buttons for rank 2
+        up_button_2 = Button(frame, text="⬆", command=lambda: self._adjust_rank(question_rank_2,
+                                                                                question_rank_1, 1, True))
+        up_button_2.grid(row=2, column=1, pady=10)
+
+        down_button_2 = Button(frame, text="⬇", command=lambda: self._adjust_rank(question_rank_2,
+                                                                                  question_rank_3, 1, False))
+        down_button_2.grid(row=2, column=2, pady=10)
+
+        # Rank 3
+        question_rank_3 = StringVar()
+        label_rank_3 = Label(frame, textvariable=question_rank_3, relief=FLAT)
+        label_rank_3.config(font=('Helvetica bold', 18))
+        question_rank_3.set("Rank 3: " + QUESTIONS_TO_ANSWERS[2][0])
+        label_rank_3.grid(row=3, column=0, pady=10, padx=10)
+        # Up/Down buttons for rank 3
+        up_button_3 = Button(frame, text="⬆", command=lambda: self._adjust_rank(question_rank_3,
+                                                                                question_rank_2, 2, True))
+        up_button_3.grid(row=3, column=1, pady=10)
+
+        down_button_3 = Button(frame, text="⬇", command=lambda: self._adjust_rank(question_rank_3,
+                                                                                  question_rank_4, 2, False))
+        down_button_3.grid(row=3, column=2, pady=10)
+
+        # Rank 3
+        question_rank_4 = StringVar()
+        label_rank_4 = Label(frame, textvariable=question_rank_4, relief=FLAT)
+        label_rank_4.config(font=('Helvetica bold', 18))
+        question_rank_4.set("Rank 4: " + QUESTIONS_TO_ANSWERS[3][0])
+        label_rank_4.grid(row=4, column=0, pady=10, padx=10)
+        # Up/Down buttons for rank 3
+        up_button_4 = Button(frame, text="⬆", command=lambda: self._adjust_rank(question_rank_4,
+                                                                                question_rank_3, 3, True))
+        up_button_4.grid(row=4, column=1, pady=10)
+
+        down_button_4 = Button(frame, text="⬇", command=lambda: self._adjust_rank(question_rank_4,
+                                                                                  question_rank_5, 3, False))
+        down_button_4.grid(row=4, column=2, pady=10)
+
+        # Rank 3
+        question_rank_5 = StringVar()
+        label_rank_5 = Label(frame, textvariable=question_rank_5, relief=FLAT)
+        label_rank_5.config(font=('Helvetica bold', 18))
+        question_rank_5.set("Rank 5: " + QUESTIONS_TO_ANSWERS[4][0])
+        label_rank_5.grid(row=5, column=0, pady=10, padx=10)
+        # Up/Down buttons for rank 3
+        up_button_5 = Button(frame, text="⬆", command=lambda: self._adjust_rank(question_rank_5,
+                                                                                question_rank_4, 4, True))
+        up_button_5.grid(row=5, column=1, pady=10)
+
+        # Ends the questionnaire
+        next_button = Button(self.window, text="Get Recommendations", command=lambda: self._clear_window(
+            frame, {label_question, next_button}))
+        next_button.pack(side=BOTTOM, pady=(0, 100))
+
+        self.window.mainloop()
+
 
 def displaying_questions() -> None:
     """Displays the questions that will be used to filter the decision tree,
@@ -385,7 +511,7 @@ def displaying_questions() -> None:
     questions.ask_questions()
 
 
-def display_decision_tree():
+def display_decision_tree(window: Tk):
     """Displays a pop-up window with the decision tree"""
     # Create the pop-up window
     window = Tk()
@@ -395,7 +521,6 @@ def display_decision_tree():
     # Code for creating the decision tree and filtering games
     # Can make this while loop stall after each question or give the user the option to move to the next question
     # Maybe display the top games at the moment
-    question_num = 0
     # while question_num < len(QUESTIONS):
 
 
