@@ -24,7 +24,7 @@ def get_json_response(params: dict) -> requests.models.Response.json:
     return response.json()['response']
 
 
-def scrape_app_ids(profile_id: int, n: int) -> list[int]:
+def scrape_app_ids(profile_id: int | str, n: int) -> list[int]:
     """Returns a list of the user's n most played games (in minutes).
     Return an empty list if the user has hidden game details.
     If the user has less than n games, return all the games they have.
@@ -33,6 +33,9 @@ def scrape_app_ids(profile_id: int, n: int) -> list[int]:
         - len(profile_id) == 17
         - n > 0
     """
+    if isinstance(profile_id, str):
+        profile_id = convert_to_64bit(profile_id)
+
     params = {
         'key': '4957E3F30616447A483A7DBA9F26172E',
         'steamid': str(profile_id),
@@ -50,6 +53,16 @@ def scrape_app_ids(profile_id: int, n: int) -> list[int]:
         return [game['appid'] for game in games_by_playtime]
     else:
         return [games_by_playtime[i]['appid'] for i in range(n)]
+
+
+def convert_to_64bit(profile_id: str) -> int:
+    url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/'
+    params = {
+        'key': '4957E3F30616447A483A7DBA9F26172E',
+        'vanityurl': profile_id
+    }
+    response = requests.get(url, params).json()
+    return int(response['response']['steamid'])
 
 
 if __name__ == '__main__':
