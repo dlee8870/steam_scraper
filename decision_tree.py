@@ -41,18 +41,21 @@ class DecisionTree:
         - false_branch: If the answer is negative
         - question_num: Represents the index of QUESTIONS
         - games: Represents the games in this node
+        - window: The window to display the state of the decision tree
     """
 
     true_branch: Optional[DecisionTree]
     false_branch: Optional[DecisionTree]
     question_num: int
     games: set[Game]
+    window: Tk
 
-    def __init__(self, games: set[Game], question_num: int = 0):
-        self.question_num = question_num
+    def __init__(self, games: set[Game], window: Tk):
+        self.question_num = 0
         self.games = games
-        self.true_branch = None
-        self.false_branch = None
+        self.true_branch = DecisionTree(set(), window)
+        self.false_branch = DecisionTree(set(), window)
+        self.window = window
 
 
 class _Questions:
@@ -511,9 +514,11 @@ def displaying_questions() -> None:
     questions.ask_questions()
 
 
-def display_decision_tree(window: Tk):
+def display_decision_tree(window: Tk, games: set[Game]):
     """Displays a pop-up window with the decision tree"""
-    # Create the pop-up window
+
+    decision_tree = DecisionTree(games, window)
+
     window = Tk()
     window.title("Decision Tree")
     window.geometry("500x500")

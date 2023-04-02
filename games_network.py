@@ -194,7 +194,8 @@ class RecommendedGamesNetwork:
             game.update_game_likeability(self.max_tributes)
 
 
-def create_recommendation_network(user_games: list[Game], num_recommendations: int = 10000) -> RecommendedGamesNetwork:
+def create_recommendation_network(user_games: dict[Game, int],
+                                  num_recommendations: int = 10000) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
     returning a complete recommended game network
@@ -218,6 +219,7 @@ def create_recommendation_network(user_games: list[Game], num_recommendations: i
 
         # TODO: Andy's function in place for the empty list return a list of recommended games given game
         # TODO: Andy get weight, calculated based on how many reviews recommended the game
+        # TODO: Returns a list of dictionary keys are the game class, and values the number of times it was recommeded
         recommendations = []
 
         for recommended_game in recommendations:
@@ -233,7 +235,7 @@ def price_similarity(init_game_price: float, recommended_game_price: float) -> f
     """Return a similarity score between 0 and 1, inclusive, given the price of a game
     and a recommended game.
     """
-    k = 0.002  # tuning parameter
+    k = 0.05  # tuning parameter
     x = abs(init_game_price - recommended_game_price)
     return math.exp(-k * x)
 

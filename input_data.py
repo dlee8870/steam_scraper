@@ -15,7 +15,7 @@ from tkinter import *
 from tkinter import messagebox
 
 root = Tk()
-root.geometry("500x500")
+root.geometry("500x600")
 root.title("Welcome to Steam Waiter")
 
 input_pf = Entry(root, width=50)
@@ -70,7 +70,7 @@ def store_data():
         else:
             # Perhaps call Decision Tree here
             ...
-        
+
 
 if __name__ == '__main__':
     import python_ta
