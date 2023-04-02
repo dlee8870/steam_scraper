@@ -56,6 +56,11 @@ def scrape_app_ids(profile_id: int | str, n: int) -> list[int]:
 
 
 def convert_to_64bit(profile_id: str) -> int:
+    """Given a custom SteamID, return the 64-bit SteamID.
+
+    Preconditions:
+        - profile_id is a custom SteamID
+    """
     url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/'
     params = {
         'key': '4957E3F30616447A483A7DBA9F26172E',
@@ -74,7 +79,7 @@ if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': ['requests', 'bs4'],  # the names (strs) of imported modules
+        'extra-imports': ['requests'],  # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
         'max-line-length': 120
     })
