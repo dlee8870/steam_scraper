@@ -20,7 +20,7 @@ class Game:
 
     Instance Attributes:
     - name: Name of the game
-    - genre: Genre of the game
+    - genres: Genre of the game
     - price: Price of the game
     - online: Whether there is an online component to the game
     - multiplayer: Whether there is a multiplayer option
@@ -44,11 +44,11 @@ class Game:
     recommended_games: dict[Game, float]
     # PythonTA says max number of attributes is 8
 
-    def __init__(self, name: str, genre: set[str], price: float, online: bool,
+    def __init__(self, name: str, genres: set[str], price: float, online: bool,
                  multiplayer: bool, rating: float, release_date: int) -> None:
         # PythonTA says max number of parameters is 5. Maybe ignore this one.
         self.name = name
-        self.genre = genre
+        self.genres = genres
         self.price = price
         self.online = online
         self.multiplayer = multiplayer
