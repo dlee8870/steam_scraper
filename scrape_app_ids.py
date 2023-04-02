@@ -12,18 +12,6 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 import requests
 
 
-def get_json_response(params: dict) -> requests.models.Response.json:
-    """Return the JSON response of the games list page given params.
-
-    Preconditions:
-        - len(profile_id) == 17
-        - the profile is public
-    """
-    url = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
-    response = requests.get(url, params)
-    return response.json()['response']
-
-
 def scrape_app_ids(profile_id: int | str, n: int) -> list[int]:
     """Returns a list of the user's n most played games (in minutes).
     Return an empty list if the user has hidden game details.
@@ -53,6 +41,18 @@ def scrape_app_ids(profile_id: int | str, n: int) -> list[int]:
         return [game['appid'] for game in games_by_playtime]
     else:
         return [games_by_playtime[i]['appid'] for i in range(n)]
+
+
+def get_json_response(params: dict) -> requests.models.Response.json:
+    """Return the JSON response of the games list page given params.
+
+    Preconditions:
+        - len(profile_id) == 17
+        - the profile is public
+    """
+    url = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
+    response = requests.get(url, params)
+    return response.json()['response']
 
 
 def convert_to_64bit(profile_id: str) -> int:

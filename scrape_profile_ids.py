@@ -13,18 +13,6 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 import requests
 
 
-def get_json_response(app_id: int, params: dict) -> requests.models.Response.json:
-    """Return the JSON response of the game reviews page
-    Note: API skips age checks and violence warnings.
-
-    Preconditions:
-        - app_id corresponds to a game on Steam
-    """
-    url = 'https://store.steampowered.com/appreviews/'
-    response = requests.get(url + str(app_id), params)
-    return response.json()
-
-
 def scrape_profile_ids(app_id: int, n: int) -> list[int]:
     """Return a list of the users corresponding to the top n most helpful reviews of the game.
 
@@ -55,6 +43,18 @@ def scrape_profile_ids(app_id: int, n: int) -> list[int]:
         reviews += response['reviews']
 
     return [review['author']['steamid'] for review in reviews]
+
+
+def get_json_response(app_id: int, params: dict) -> requests.models.Response.json:
+    """Return the JSON response of the game reviews page
+    Note: API skips age checks and violence warnings.
+
+    Preconditions:
+        - app_id corresponds to a game on Steam
+    """
+    url = 'https://store.steampowered.com/appreviews/'
+    response = requests.get(url + str(app_id), params)
+    return response.json()
 
 
 if __name__ == '__main__':
