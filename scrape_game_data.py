@@ -12,23 +12,28 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 
 from bs4 import BeautifulSoup
 import requests
+from games_network import Game
 
 
-def get_game_data(app_id: int) -> dict:
+def get_game_data(app_id: int) -> Game:
     """Scrape game data from the Steam store given an app id.
 
     Preconditions:
     - app_id corresponds to an existing game on the Steam platform.
 
-    >>> get_game_data(1677740)
-    {'name': 'Stumble Guys', 'genres': ['Free to Play', 'Multiplayer', 'Action', 'Casual', '3D', '3D Platformer', \
-'Colorful', 'Family Friendly', 'Battle Royale', 'Cute', 'Cartoony', 'Racing', 'Character Customization', \
-'Massively Multiplayer', 'PvP', 'Nudity', 'Physics', 'Comedy', 'Funny', 'Indie'], 'is_multiplayer': True, \
-'has_online_component': True, 'price': 0, 'rating': 0.9, 'release_date': '2021'}
+    >>> game1 = get_game_data(1677740)
+    >>> game1.name
+    'Stumble Guys'
+    >>> game1.rating
+    0.9
 
-    >>> get_game_data(1023940)
-    {'name': 'VR-CPR Personal Edition', 'genres': ['Education', 'Software Training', 'VR'], \
-'is_multiplayer': False, 'has_online_component': False, 'price': 135.99, 'rating': 0.1, 'release_date': '2019'}
+    >>> game2 = get_game_data(1023940)
+    >>> game2.genres
+    {'Education', 'Software Training', 'VR'}
+    >>> game2.multiplayer
+    False
+    >>> game2.price
+    135.99
     """
     url = f"https://store.steampowered.com/app/{app_id}/"
     response = requests.get(url)
@@ -41,7 +46,7 @@ def get_game_data(app_id: int) -> dict:
     description = soup.find('div', {'class': 'game_description_snippet'}).text.strip()
 
     # Get game genres
-    genres = [genre.text.strip() for genre in soup.select("a.app_tag")]
+    genres = {genre.text.strip() for genre in soup.select("a.app_tag")}
 
     # Get game player modes
     is_multiplayer = 'multiplayer' in description.lower() or 'multi-player' in description.lower() or \
@@ -97,15 +102,7 @@ def get_game_data(app_id: int) -> dict:
     else:
         release_year = ""
 
-    return {
-        "name": name,
-        "genres": genres,
-        "is_multiplayer": is_multiplayer,
-        "has_online_component": has_online_component,
-        "price": price,
-        "rating": rating,
-        "release_date": release_year
-    }
+    return Game(name, genres, price, has_online_component, is_multiplayer, rating, int(release_year))
 
 
 if __name__ == '__main__':
