@@ -27,15 +27,19 @@ r.get()
 def run_tkinter():
     """Run the Tkinter application"""
 
-    label = Label(root, text="Enter Steam Profile", font=('Arial', 18))
-    label.place(rely=0.1, relx=0.34)
+    label = Label(root, text="Steam Waiter: Serving your game", font=('Arial', 18))
+    label.place(rely=0.1, relx=0.22)
 
     # Enter button to input data
     button = Button(root, text='Find games!', font=('Arial', 18), command=store_data)
-    button.place(relx=0.37, rely=0.3)
+    button.place(relx=0.36, rely=0.3)
 
-    Radiobutton(root, text='Default 64-bit profile', variable=r, value=1).pack()
-    Radiobutton(root, text='Custom Profile', variable=r, value=2).pack()
+    # Information button
+    info_button = Button(root, text='I', font=('Times New Roman', 18), command=display_info)
+    info_button.place(relx=0.8, rely=0.8)
+
+    Radiobutton(root, text='Default 64-bit profile', variable=r, value=1).place(rely=0.5, relx=0.35)
+    Radiobutton(root, text='Custom Profile', variable=r, value=2).place(rely=0.6, relx=0.35)
 
     # Default text in the input box
     input_pf.insert(0, "Enter info here")
@@ -43,6 +47,9 @@ def run_tkinter():
     # Run the window
     root.mainloop()
 
+def display_info():
+    """Give instructions on how to operate menu"""
+    messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), and then fill out the box")
 
 def store_data():
     """Store the data inputed in the textbox into a variable"""
@@ -50,13 +57,19 @@ def store_data():
     if r.get() == 1:
         all_int_64_prof = input_pf.get()
         # If length of 64 bit != 17 or if every the input is not all integers
-        if len(all_int_64_prof) != 17 or all(letter.isnumeric() for letter in all_int_64_prof) == False:
+        if len(all_int_64_prof) != 17 or all(letter.isnumeric() for letter in all_int_64_prof) is False:
             messagebox.showerror("Error", "Invalid input")
         else:
-            # Pass the info on to create decision tree
+            # Perhaps call Decision Tree here
+            ...
     # IF the input is a custom profile input
     else:
         custom_prof = input_pf.get()
+        if custom_prof.isalpha() is True:
+            messagebox.showerror("Error", "Invalid input")
+        else:
+            # Perhaps call Decision Tree here
+            ...
         
 
 if __name__ == '__main__':
