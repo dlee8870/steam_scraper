@@ -11,11 +11,15 @@ This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
 """
 
 from __future__ import annotations
+
+import random
 import time
 from tkinter import *
 from games_network import *
 from typing import Optional, Any
+from queue import Queue
 
+# This is a list of tuples where the first element is the question and the second element is the user's answer
 QUESTIONS_TO_ANSWERS = []
 
 
@@ -41,21 +45,179 @@ class DecisionTree:
         - false_branch: If the answer is negative
         - question_num: Represents the index of QUESTIONS
         - games: Represents the games in this node
-        - window: The window to display the state of the decision tree
     """
 
     true_branch: Optional[DecisionTree]
     false_branch: Optional[DecisionTree]
     question_num: int
     games: set[Game]
-    window: Tk
 
-    def __init__(self, games: set[Game], window: Tk):
-        self.question_num = 0
-        self.games = games
-        self.true_branch = DecisionTree(set(), window)
-        self.false_branch = DecisionTree(set(), window)
-        self.window = window
+    def __init__(self, games: set[Game], user_games: Optional[set[Game]] = None, question_num: int = 0) -> None:
+        self.question_num = question_num
+        if user_games is not None:
+            self.games = games - user_games
+        self.true_branch = None
+        self.false_branch = None
+
+    def generate_preset_decision_tree(self) -> None:
+        """Generates teh decision tree."""
+
+        queue = Queue()
+        queue.put_nowait(self)
+
+        while not queue.empty():
+            subtree = queue.get_nowait()
+
+            # Addign its subtrees
+            subtree.true_branch = DecisionTree(set(), question_num=subtree.question_num + 1)
+            subtree.false_branch = DecisionTree(set(), question_num=subtree.question_num + 1)
+
+            # Our binary tree is of height 6, so we only need to create more subtrees if it at most height 4
+            if subtree.question_num + 1 < 5:
+                queue.put_nowait(subtree.true_branch)
+                queue.put_nowait(subtree.false_branch)
+
+    def filter_by_genre(self) -> tuple[int, int]:
+        """Filters the games to the true_branch if it matches the user's genre preference,
+        otherwise moves it to the false_branch
+
+        True if the game contains at least one of the users preferred genres or if user's preferred genre is false,
+        False otherwise
+
+        returns a tuple of the number of positive and negative games
+
+        Preconditions:
+            - QUESTION_TO_ANSWERS[self.question_num][0] = "Genre"
+        """
+
+        user_genres = QUESTIONS_TO_ANSWERS[self.question_num][1]
+        num_positive_games, num_negative_games = 0, 0
+
+        for game in self.games:
+
+            if user_genres == set() or any(user_genre in game.genres for user_genre in user_genres):
+                self.true_branch.games.add(game)
+                num_positive_games += 1
+            else:
+                self.false_branch.games.add(game)
+                num_negative_games += 1
+
+        return num_positive_games, num_negative_games
+
+    def filter_by_price(self) -> None:
+        """Filters the games to the true_branch if it matches the user's price preference,
+        otherwise moves it to the false_branch
+
+        True if the price simillarity is at least 50%
+        False otherwise
+
+        returns a tuple of the number of positive and negative games
+
+        Preconditions:
+            - QUESTION_TO_ANSWERS[self.question_num][0] = "Price"
+        """
+        k = 0.05  # tuning parameter
+        user_price = QUESTIONS_TO_ANSWERS[self.question_num][1]
+        num_positive_games, num_negative_games = 0, 0
+
+        for game in self.games:
+            x = abs(game.price - user_price)
+            price_similratiy = math.exp(-k * x)
+
+            if price_similratiy >= 0.5:
+                self.true_branch.games.add(game)
+                num_positive_games += 1
+            else:
+                self.false_branch.games.add(game)
+                num_negative_games += 1
+
+        return num_positive_games, num_negative_games
+
+    def filter_by_date(self) -> None:
+        """Filters the games to the true_branch if it matches the user's date preference,
+        otherwise moves it to the false_branch
+
+        The range of the dates is from 1980 to 2023
+
+        True if the sbdolute difference the dates is less than or equal to 7
+        False otherwise
+
+        returns a tuple of the number of positive and negative games
+
+        Preconditions:
+            - QUESTION_TO_ANSWERS[self.question_num][0] = "Date"
+        """
+
+        user_date = QUESTIONS_TO_ANSWERS[self.question_num][1]
+        num_positive_games, num_negative_games = 0, 0
+
+        for game in self.games:
+            diff = abs(game.release_date - user_date)
+
+            if diff <= 7:
+                self.true_branch.games.add(game)
+                num_positive_games += 1
+            else:
+                self.false_branch.games.add(game)
+                num_negative_games += 1
+
+        return num_positive_games, num_negative_games
+
+    def filter_by_online(self) -> None:
+        """Filters the games to the true_branch if it matches the user's online preference,
+        otherwise moves it to the false_branch
+
+        This value is already either true or false
+
+        True if the games online state matches the user's online preference
+        False otherwise
+
+        returns a tuple of the number of positive and negative games
+
+        Preconditions:
+            - QUESTION_TO_ANSWERS[self.question_num][0] = "Online"
+        """
+        user_online = QUESTIONS_TO_ANSWERS[self.question_num][1]
+        num_positive_games, num_negative_games = 0, 0
+
+        for game in self.games:
+
+            if user_online == game.online:
+                self.true_branch.games.add(game)
+                num_positive_games += 1
+            else:
+                self.false_branch.games.add(game)
+                num_negative_games += 1
+
+        return num_positive_games, num_negative_games
+
+    def filter_by_multiplayer(self) -> None:
+        """Filters the games to the true_branch if it matches the user's multiplayer preference,
+        otherwise moves it to the false_branch
+
+        This value is already either true or false
+
+        True if the games multiplayer state matches the user's multiplayer preference
+        False otherwise
+
+        returns a tuple of the number of positive and negative games
+
+        Preconditions:
+            - QUESTION_TO_ANSWERS[self.question_num][0] = "Multiplayer"
+        """
+        user_multiplayer = QUESTIONS_TO_ANSWERS[self.question_num][1]
+        num_positive_games, num_negative_games = 0, 0
+
+        for game in self.games:
+
+            if user_multiplayer == game.multiplayer:
+                self.true_branch.games.add(game)
+                num_positive_games += 1
+            else:
+                self.false_branch.games.add(game)
+                num_negative_games += 1
+
+        return num_positive_games, num_negative_games
 
 
 class _Questions:
@@ -74,8 +236,11 @@ class _Questions:
     genres_counter: int
     genres: set[str]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.window = Tk()
+        self.window.title("Preferences")
+        self.window.geometry("500x600")
+        self.window.resizable(False, False)
         self.genres_counter = 5
         self.question_index = 0
 
@@ -88,12 +253,12 @@ class _Questions:
             self.genres.add(line.removesuffix("\n").lower())
             line = file.readline()
 
-    def ask_questions(self):
+    def ask_questions(self) -> None:
         """Runs the chain of functions asking the user questions as well as ranking priority of questions"""
 
         self._get_genres()
 
-    def _clear_window(self, frame: Frame, widgets: set[Any] | None):
+    def _clear_window(self, frame: Frame, widgets: set[Any] | None) -> None:
         """Clears the frame of the window
         If there are extra widgets outside the frame it will erase them as well
         """
@@ -183,9 +348,6 @@ class _Questions:
         """Gets the users perferred genres"""
         frame = Frame(self.window, width=500, height=600)
         frame.pack()
-        self.window.title("Preferences")
-        self.window.geometry("500x600")
-        self.window.resizable(False, False)
 
         # Question Label
         question = StringVar()
@@ -250,9 +412,6 @@ class _Questions:
 
         frame = Frame(self.window, width=500, height=600)
         frame.pack()
-        self.window.title("Preferences")
-        self.window.geometry("500x600")
-        self.window.resizable(False, False)
 
         # Question Label
         question = StringVar()
@@ -302,9 +461,6 @@ class _Questions:
 
         frame = Frame(self.window, width=500, height=600)
         frame.pack()
-        self.window.title("Preferences")
-        self.window.geometry("500x600")
-        self.window.resizable(False, False)
 
         # Question Label
         question = StringVar()
@@ -332,9 +488,6 @@ class _Questions:
 
         frame = Frame(self.window, width=500, height=600)
         frame.pack()
-        self.window.title("Preferences")
-        self.window.geometry("500x600")
-        self.window.resizable(False, False)
 
         # Question Label
         question = StringVar()
@@ -362,9 +515,6 @@ class _Questions:
 
         frame = Frame(self.window, width=500, height=600)
         frame.pack()
-        self.window.title("Preferences")
-        self.window.geometry("500x600")
-        self.window.resizable(False, False)
 
         # Question Label
         question = StringVar()
@@ -387,7 +537,7 @@ class _Questions:
 
         self.window.mainloop()
 
-    def _adjust_rank(self, curr_quest: StringVar, swap_quest: StringVar, index: int, up: bool):
+    def _adjust_rank(self, curr_quest: StringVar, swap_quest: StringVar, index: int, up: bool) -> None:
         """Adjusts the rank given the current index, either increases up by on or down by 1
         if up is true swap with rank above
         otherwise swap with the rank below
@@ -412,9 +562,6 @@ class _Questions:
     def _rank_questions(self):
         """Ranks the order of the questions, the higher the question the more important it is."""
 
-        self.window.title("Preferences")
-        self.window.geometry("500x600")
-        self.window.resizable(False, False)
         frame = Frame(self.window)
 
         # Question Label
@@ -514,24 +661,207 @@ def displaying_questions() -> None:
     questions.ask_questions()
 
 
-def display_decision_tree(window: Tk, games: set[Game]):
-    """Displays a pop-up window with the decision tree"""
+def _display_stats_for_question(frame: Frame, question: str,
+                                positive_per: float, negative_per: float, get_results: bool) -> None:
+    """Displays the stats of the current question on the given frame
 
-    decision_tree = DecisionTree(games, window)
+    Pauses the decision tree computation until the user clicks the continue button which destroys the frame.
+    """
 
-    window = Tk()
-    window.title("Decision Tree")
-    window.geometry("500x500")
+    # Current filter
+    curr_question = StringVar()
+    label_curr_question = Label(frame, textvariable=curr_question, relief=FLAT)
+    label_curr_question.config(font=('Helvetica bold', 20))
+    curr_question.set(f"Results of Filtering by {question} Preference")
+    label_curr_question.pack(side=TOP, pady=60)
 
-    # Code for creating the decision tree and filtering games
-    # Can make this while loop stall after each question or give the user the option to move to the next question
-    # Maybe display the top games at the moment
-    # while question_num < len(QUESTIONS):
+    # The results
+    positive_str = StringVar()
+    label_positive_results = Label(frame, textvariable=positive_str, relief=SOLID)
+    label_positive_results.config(font=('Helvetica bold', 18))
+    positive_str.set(f"Percentage of Games That Match your {question} Prefence: {positive_per}")
+    label_positive_results.pack(side=TOP, pady=(75, 10))
+
+    negative_str = StringVar()
+    label_negative_results = Label(frame, textvariable=negative_str, relief=SOLID)
+    label_negative_results.config(font=('Helvetica bold', 18))
+    negative_str.set(f"Percentage of Games That did Not Match your {question} Prefence: {negative_per}")
+    label_positive_results.pack(side=TOP)
+
+    # Continue button
+    if get_results:
+        button_text = "Get Results"
+    else:
+        button_text = "Continue"
+
+    continue_button = Button(frame, text=button_text, command=frame.destroy())
+    continue_button.pack(side=BOTTOM, pady=(0, 100))
+
+    frame.mainloop()
 
 
-def displaying_results():
+def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -> None:
+    """Displays a pop-up window with the decision tree
+
+    Note we do not need a visited set since this is a binary tree
+    """
+    decision_tree = DecisionTree(games, user_games)
+    window.title("Finding Games You Will Like")
+    window.geometry("500x600")
+    window.resizable(False, False)
+    frame = Frame(window)
+    frame.pack()
+
+    # Header Label
+    header = StringVar()
+    label_header = Label(window, textvariable=header, relief=FLAT)
+    label_header.config(font=('Helvetica bold', 26))
+    header.set("Filtering Games")
+    label_header.pack(side=TOP)
+
+    window.update()
+
+    # Creates the decision tree
+    decision_tree.generate_preset_decision_tree()
+
+    queue = Queue()
+    queue.put_nowait(decision_tree)
+
+    order_of_games = []
+
+    display_counter = 1
+    total_games = len(decision_tree.games)
+
+    # The stats per question this will be reset each question
+    num_positive_games_per_q, num_negative_game_per_q = 0, 0
+
+    while not queue.empty():
+        subtree = queue.get_nowait()
+        question = QUESTIONS_TO_ANSWERS[subtree.question_num][0]
+
+        # When we are filtering for a new questions show the results to the window of the last question
+        if subtree.question_num == display_counter:
+            percentage_of_positives = num_positive_games_per_q / total_games
+            percentage_of_negatives = num_negative_game_per_q / total_games
+            last_question = QUESTIONS_TO_ANSWERS[display_counter - 1][0]
+            _display_stats_for_question(frame, last_question, percentage_of_positives, percentage_of_negatives, False)
+
+            num_positive_games_per_q, num_negative_game_per_q = 0, 0
+            display_counter += 1
+
+        # Move games comapring their attributes to the answer given by the user
+        if question == "Genre":
+            results = subtree.filter_by_genre()
+            num_positive_games_per_q += results[0]
+            num_negative_game_per_q += results[1]
+        elif question == "Price":
+            results = subtree.filter_by_price()
+            num_positive_games_per_q += results[0]
+            num_negative_game_per_q += results[1]
+        elif question == "Date":
+            results = subtree.filter_by_date()
+            num_positive_games_per_q += results[0]
+            num_negative_game_per_q += results[1]
+        elif question == "Online":
+            results = subtree.filter_by_online()
+            num_positive_games_per_q += results[0]
+            num_negative_game_per_q += results[1]
+        else:
+            results = subtree.filter_by_multiplayer()
+            num_positive_games_per_q += results[0]
+            num_negative_game_per_q += results[1]
+
+        # If the next subtrees have a question to ask
+        if (subtree.question_num + 1) < 5:
+            queue.put_nowait(subtree.false_branch)
+            queue.put_nowait(subtree.true_branch)
+        else:
+            # The end result of the games when they have filtered into the last subtree
+            # Notice that since we are adding the false branch first this will give us
+            # the order from least similar to most similar
+
+            order_of_games.append(subtree.false_branch.games)
+            order_of_games.append(subtree.true_branch.games)
+
+    # Transition here to get results destroy header label here display the last results as well here
+    percentage_of_positives = num_positive_games_per_q / total_games
+    percentage_of_negatives = num_negative_game_per_q / total_games
+    last_question = QUESTIONS_TO_ANSWERS[4][0]
+    _display_stats_for_question(frame, last_question, percentage_of_positives, percentage_of_negatives, True)
+
+    # Get the results
+    top_three = _get_results(order_of_games)
+
+def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
+    """Based on the ordering of the games get the top three games combining likeability score and
+    the ordering done by the decision tree.
+
+    If there is a tie we take the game higher up in the order
+    To break another tie take the game with the higher likeability score
+    Otherwise keep the game that was already in the top 3
+
+    returns the top three games
+    """
+    # Getting the starting 3, note that there will always be atleast 1000 games in teh network
+    # thus there must atleast one order which contains at least 3 games in it
+    import random
+    starting_3 = random.choice(order_of_games).copy()
+    while len(starting_3) < 3:
+        starting_3 = random.choice(order_of_games).copy()
+
+    # The pop method for set removes and return random elements this is why I made a copy, so it does not mutate
+    top_three = [starting_3.pop(), starting_3.pop(), starting_3.pop()]
+
+    for order in range(0, len(order_of_games)):
+        for game in order:
+            _compare_top_three(top_three, game, order + 1)
+
+    return top_three
+
+
+def _compare_top_three(top_three: list[tuple[Game, int]], game: Game, order: int) -> None:
+    """Comapres the game witht the top_three if it has a higher score it will mutate top_three
+
+    The higher the index in top_three the higher the game score
+
+    The first element of the tuple is the game and the second element is the order of the game
+    The higher the order the more similar the game is to the user's preferences
+    """
+
+    for i in range(0, 3):
+        if _compare_games((game, order), top_three[i]):
+            if i == 0:
+                top_three[0] = (game, order)
+            else:
+                top_three[i - 1], top_three[i] = top_three[i], top_three[i - 1]
+        else:
+            break
+
+def _compare_games(game1: tuple[Game, int], game2: tuple[Game, int]) -> bool:
+    """Given two game and its order return true if game 1 should be higher up
+
+    Note max order is 64
+
+    To compute the user preference score it will be on a scale of 0 - 5 where the order determined its scaling
+
+    Break ties as mentioned in _get_results
+    """
+
+    game1_score = game1[0].likeability + (game1[1] / 64) * 5
+    game2_score = game2[0].likeability + (game2[1] / 64) * 5
+
+    if game1_score > game2:
+        return True
+    elif game1_score == game2_score and game1[1] > game2[1]:
+        return True
+    elif game1_score == game2_score and game1[1] == game2[1] and game1[0].likeability > game2[0].likeability:
+        return True
+    else:
+        return False
+
+
+def displaying_results(window: Tk) -> None:
     """Displays the results using tkinter with the scores out of 10.
-
     """
 
 

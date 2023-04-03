@@ -230,16 +230,6 @@ def create_recommendation_network(user_games: dict[Game, int],
     return network
 
 
-#  TODO: This function will be used in the decision tree when we get the user's preference
-def price_similarity(init_game_price: float, recommended_game_price: float) -> float:
-    """Return a similarity score between 0 and 1, inclusive, given the price of a game
-    and a recommended game.
-    """
-    k = 0.05  # tuning parameter
-    x = abs(init_game_price - recommended_game_price)
-    return math.exp(-k * x)
-
-
 if __name__ == '__main__':
     import python_ta
     import python_ta.contracts
