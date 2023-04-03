@@ -10,9 +10,9 @@ Copyright and Usage Information
 This file is Copyright (c) 2023 Daniel Lee, Andy Zhang, Chris Oh, Ahmed Hassini
 """
 from __future__ import annotations
-import requests
 from tkinter import *
 from tkinter import messagebox
+import requests
 
 
 def run_tkinter(profile_id: list) -> None:
@@ -108,8 +108,8 @@ if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': ['tkinter'],  # the names (strs) of imported modules
-        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'extra-imports': ['tkinter', 'requests'],
+        'allowed-io': [],
         'disable': ['wildcard-import'],
         'max-line-length': 120
     })
