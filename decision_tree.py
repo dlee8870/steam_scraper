@@ -829,7 +829,7 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
         while len(starting) == 0:
             starting = random.choice(order_of_games)
 
-        top_five.append((starting.pop(), -64))
+        top_five.append((starting.pop(), -32))
 
     for order in range(0, len(order_of_games)):
         for game in order_of_games[order]:
@@ -867,8 +867,8 @@ def _compare_games(game1: tuple[Game, int], game2: tuple[Game, int]) -> bool:
     Break ties as mentioned in _get_results
     """
 
-    game1_score = game1[0].likeability + (game1[1] / 64) * 5
-    game2_score = game2[0].likeability + (game2[1] / 64) * 5
+    game1_score = game1[0].likeability + (game1[1] / 32) * 5
+    game2_score = game2[0].likeability + (game2[1] / 32) * 5
 
     if game1_score > game2_score:
         return True
@@ -898,7 +898,8 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     frame1.pack()
 
     # Game 1
-    game1, preference_score_1 = top_games[4][0], top_games[4][1] / 64
+    game1, preference_score_1 = top_games[4][0], top_games[4][1] / 32
+    print(preference_score_1 * 5)
     game1_stats = StringVar()
     label_game1 = Label(frame1, textvariable=game1_stats, relief=SOLID)
     label_game1.config(font=('Helvetica bold', 12))
@@ -911,7 +912,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game1.grid(row=0, column=0, pady=(0, 15))
 
     # Game 2
-    game2, preference_score_2 = top_games[3][0], top_games[3][1] / 64
+    game2, preference_score_2 = top_games[3][0], top_games[3][1] / 32
     game2_stats = StringVar()
     label_game2 = Label(frame1, textvariable=game2_stats, relief=SOLID)
     label_game2.config(font=('Helvetica bold', 12))
@@ -921,10 +922,10 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Online: {game2.online}\n"
                     f"Multiplayer: {game2.multiplayer}\n"
                     f"Game Score: {round(((game2.likeability / 3 + preference_score_2 * 5) / 6) * 100, 1)}%\n")
-    label_game2.grid(row=0, column=1, pady=(0, 15), padx=(15, 0))
+    label_game2.grid(row=0, column=1, pady=(0, 15), padx=(0, 15))
 
     # Game 3
-    game3, preference_score_3 = top_games[2][0], top_games[2][1] / 64
+    game3, preference_score_3 = top_games[2][0], top_games[2][1] / 32
     game3_stats = StringVar()
     label_game3 = Label(frame1, textvariable=game3_stats, relief=SOLID)
     label_game3.config(font=('Helvetica bold', 12))
@@ -937,7 +938,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game3.grid(row=0, column=2, pady=(0, 15))
 
     # Game 4
-    game4, preference_score_4 = top_games[1][0], top_games[1][1] / 64
+    game4, preference_score_4 = top_games[1][0], top_games[1][1] / 32
     game4_stats = StringVar()
     label_game4 = Label(frame1, textvariable=game4_stats, relief=SOLID)
     label_game4.config(font=('Helvetica bold', 12))
@@ -950,7 +951,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game4.grid(row=1, column=0)
 
     # Game 5
-    game5, preference_score_5 = top_games[0][0], top_games[0][1] / 64
+    game5, preference_score_5 = top_games[0][0], top_games[0][1] / 32
     game5_stats = StringVar()
     label_game5 = Label(frame1, textvariable=game5_stats, relief=SOLID)
     label_game5.config(font=('Helvetica bold', 12))
