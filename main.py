@@ -9,6 +9,7 @@ This file is Copyright (c) 2023 Chris Oh, Ahmed Hassini, Andy Zhang, Daniel Lee
 from scrape_app_ids import scrape_app_ids
 from games_network import create_recommendation_network
 from scrape_game_data import get_game_data
+from input_data import run_tkinter
 
 # Note to self: Need to split up program into the following files according to assignment page:
 #   - Reading data (done)
@@ -22,6 +23,8 @@ if __name__ == '__main__':
     # Load necessary files from datasets
     # Perform computations on the data
     # Produce an output
+
+    run_tkinter()
 
     # 1. User is prompted to enter their profile_id using code in input_data.py
     profile_id = 76561198976283119

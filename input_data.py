@@ -25,7 +25,7 @@ r = IntVar()
 r.get()
 
 
-def run_tkinter():
+def run_tkinter() -> None:
     """Run the Tkinter application"""
 
     label = Label(root, text="Steam Waiter: Serving your game", font=('Arial', 18))
@@ -49,12 +49,12 @@ def run_tkinter():
     root.mainloop()
 
 
-def display_info():
+def display_info() -> None:
     """Give instructions on how to operate menu"""
     messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), and then fill out the box")
 
 
-def store_data():
+def store_data() -> None:
     """Store the data inputed in the textbox into a variable"""
     # If the input is 64-bit all int profile
     if r.get() == 1:
@@ -85,7 +85,8 @@ if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': [],  # the names (strs) of imported modules
+        'extra-imports': ['tkinter'],  # the names (strs) of imported modules
         'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'disable': ['wildcard-import'],
         'max-line-length': 120
     })
