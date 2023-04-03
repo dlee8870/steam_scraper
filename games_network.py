@@ -223,12 +223,11 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
     """
     network = RecommendedGamesNetwork()
 
-    visited_app_ids = set()
     visited_profile_ids = set()
     q = Queue()  # Queue of app ids
+    recommendations = {}
 
     for app_id in app_id_to_game:
-        visited_app_ids.add(app_id)  # Adding starting games to visited
         q.put_nowait(app_id)  # Adding starting games to queue
         network.add_game(app_id_to_game[app_id])  # Adding starting games to network
 
@@ -236,18 +235,17 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
     #  Exit if the queue is empty (Occurs when not enough reviews on games were found)
     while not q.empty() and network.num_games < num_recommendations:
         print(network.num_games)
-        app_id = q.get_nowait()
-        visited_app_ids.add(app_id)
-        profile_ids = scrape_profile_ids(app_id, 5)
+        curr_app_id = q.get_nowait()
+        profile_ids = scrape_profile_ids(curr_app_id, 5)
 
         for profile_id in profile_ids:
             if profile_id not in visited_profile_ids and network.num_games < num_recommendations:
                 app_ids = scrape_app_ids(profile_id, 5)
                 visited_profile_ids.add(profile_id)
                 for app_id in app_ids:
-                    if app_id not in visited_app_ids:
+                    if app_id not in recommendations:
                         q.put_nowait(app_id)
-                        network.add_recommendation()
+                        network.add_recommendation(get_game_data(curr_app_id), get_game_data(app_id), 0)
 
     return network
 
