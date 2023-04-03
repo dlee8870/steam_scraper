@@ -51,7 +51,7 @@ def run_tkinter() -> None:
 
 def display_info() -> None:
     """Give instructions on how to operate menu"""
-    messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), and then fill out the box")
+    messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), then fill out the input box with your profile ID.")
 
 
 def store_data() -> None:
