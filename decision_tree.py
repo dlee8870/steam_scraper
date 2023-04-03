@@ -101,7 +101,6 @@ class DecisionTree:
             if user_genres == set() or any(game_genre.lower() in user_genres for game_genre in game.genres):
                 self.true_branch.games.add(game)
                 num_positive_games += 1
-                print("yes")
             else:
                 self.false_branch.games.add(game)
                 num_negative_games += 1
