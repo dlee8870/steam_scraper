@@ -241,7 +241,7 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
     while not q.empty() and network.num_games < num_recommendations:
         curr_app_id = q.get_nowait()
         profile_ids = scrape_profile_ids(curr_app_id, 5)
-        print(f"Completeness: {round((network.num_games / num_recommendations) * 100, 1)}")
+        print(f"Completeness: {round((network.num_games / num_recommendations) * 100, 1)}%")
 
         for profile_id in profile_ids:
             if profile_id not in visited_profile_ids and network.num_games < num_recommendations:
