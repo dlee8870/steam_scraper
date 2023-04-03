@@ -12,7 +12,7 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 import requests
 
 
-def scrape_app_ids(profile_id: int | str, n: int) -> list[int]:
+def scrape_app_ids(profile_id: int, n: int) -> list[int]:
     """Returns a list of the user's n most played games (in minutes).
     Return an empty list if the user has hidden game details.
     If the user has less than n games, return all the games they have.

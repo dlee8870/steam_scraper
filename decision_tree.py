@@ -673,11 +673,13 @@ def destroy_frame(frame: Frame) -> None:
     frame.destroy()
 
 
-def _display_stats_for_question(frame: Frame, question: str,
-                                positive_per: float, negative_per: float, get_results: bool) -> None:
+def _display_stats_for_question(frame: Frame, question: str, positive_per: float,
+                                negative_per: float, get_results: bool) -> list[[tuple[Game, int]]]:
     """Displays the stats of the current question on the given frame
 
     Pauses the decision tree computation until the user clicks the continue button which destroys the frame.
+
+    Returns the top games
     """
 
     # Current filter
@@ -712,10 +714,12 @@ def _display_stats_for_question(frame: Frame, question: str,
     frame.mainloop()
 
 
-def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -> None:
+def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -> list[tuple[Game, int]]:
     """Displays a pop-up window with the decision tree
 
     Note we do not need a visited set since this is a binary tree
+
+    Returns the top fivve games and the window
     """
     decision_tree = DecisionTree(games, user_games)
     window.title("Finding Games You Will Like")
@@ -804,6 +808,8 @@ def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -
     # Get the results
     top_five = _get_results(order_of_games)
 
+    return top_five
+
 
 def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
     """Based on the ordering of the games get the top three games combining likeability score and
@@ -813,7 +819,7 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
     To break another tie take the game with the higher likeability score
     Otherwise keep the game that was already in the top 3
 
-    returns the top three games
+    returns the top five games
     """
     # Getting the starting 3, note that there will always be atleast 1000 games in teh network
     # thus there must atleast one order which contains at least 3 games in it

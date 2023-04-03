@@ -29,18 +29,18 @@ if __name__ == '__main__':
     profile_id = list()
     run_tkinter(profile_id)
 
-    game_app_ids_user = scrape_app_ids(profile_id, 6)
+    game_app_ids_user = scrape_app_ids(profile_id[0], 6)
 
     app_id_to_game = {app_id: get_game_data(app_id) for app_id in game_app_ids_user}
 
-    netowrk = create_recommendation_network(app_id_to_game)
+    # This function will take some time
+    network = create_recommendation_network(app_id_to_game)
 
     window = displaying_questions()
 
-    display_decision_tree(window, netowrk.get_games(), set(app_id_to_game.values()))
+    top_games = display_decision_tree(window, network.get_games(), set(app_id_to_game.values()))
 
-
-
+    displaying_results(window, top_games)
 
     # 1. User is prompted to enter their profile_id using code in input_data.py
     # 2. Their profile_id is passed into scrape_app_ids() in scrape_app_ids.py which returns a set of app_ids

@@ -18,9 +18,8 @@ def run_tkinter(profile_id: list) -> None:
     """Run the Tkinter application"""
     root = Tk()
     root.geometry("500x600")
+    root.resizable(False, False)
     root.title("Welcome to Steam Waiter")
-    frame = Frame(root)
-    frame.pack()
 
     input_pf = Entry(root, width=50)
     input_pf.place(relx=0.5, rely=0.2, anchor='n')
@@ -28,20 +27,20 @@ def run_tkinter(profile_id: list) -> None:
     r = IntVar()
     r.get()
 
-    label = Label(frame, text="Steam Waiter: Serving your game", font=('Arial', 18))
+    label = Label(root, text="Steam Waiter: Serving your game", font=('Arial', 18))
     label.place(rely=0.1, relx=0.22)
 
     # Enter button to input data
-    button = Button(frame, text='Find games!', font=('Arial', 18), command=lambda: store_data(profile_id, input_pf,
-                                                                                              r, root))
+    button = Button(root, text='Find games!', font=('Arial', 18), command=lambda: store_data(profile_id, input_pf,
+                                                                                             r, root))
     button.place(relx=0.36, rely=0.3)
 
     # Information button
-    info_button = Button(frame, text='I', font=('Times New Roman', 18), command=display_info)
+    info_button = Button(root, text='I', font=('Times New Roman', 18), command=display_info)
     info_button.place(relx=0.8, rely=0.8)
 
-    Radiobutton(frame, text='Default 64-bit profile', variable=r, value=1).place(rely=0.5, relx=0.35)
-    Radiobutton(frame, text='Custom Profile', variable=r, value=2).place(rely=0.6, relx=0.35)
+    Radiobutton(root, text='Default 64-bit profile', variable=r, value=1).place(rely=0.5, relx=0.35)
+    Radiobutton(root, text='Custom Profile', variable=r, value=2).place(rely=0.6, relx=0.35)
 
     # Default text in the input box
     input_pf.insert(0, "Enter info here")
