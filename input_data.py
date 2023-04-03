@@ -14,33 +14,34 @@ from __future__ import annotations
 from tkinter import *
 from tkinter import messagebox
 
-root = Tk()
-root.geometry("500x600")
-root.title("Welcome to Steam Waiter")
-
-input_pf = Entry(root, width=50)
-input_pf.place(relx=0.5, rely=0.2, anchor='n')
-
-r = IntVar()
-r.get()
-
-
-def run_tkinter() -> None:
+def run_tkinter(profile_id: set) -> None:
     """Run the Tkinter application"""
+    root = Tk()
+    root.geometry("500x600")
+    root.title("Welcome to Steam Waiter")
+    frame = Frame(root)
+    frame.pack()
 
-    label = Label(root, text="Steam Waiter: Serving your game", font=('Arial', 18))
+    input_pf = Entry(root, width=50)
+    input_pf.place(relx=0.5, rely=0.2, anchor='n')
+
+    r = IntVar()
+    r.get()
+
+    label = Label(frame, text="Steam Waiter: Serving your game", font=('Arial', 18))
     label.place(rely=0.1, relx=0.22)
 
     # Enter button to input data
-    button = Button(root, text='Find games!', font=('Arial', 18), command=store_data)
+    button = Button(frame, text='Find games!', font=('Arial', 18), command=lambda: store_data(profile_id, input_pf,
+                                                                                              r, root))
     button.place(relx=0.36, rely=0.3)
 
     # Information button
-    info_button = Button(root, text='I', font=('Times New Roman', 18), command=display_info)
+    info_button = Button(frame, text='I', font=('Times New Roman', 18), command=display_info)
     info_button.place(relx=0.8, rely=0.8)
 
-    Radiobutton(root, text='Default 64-bit profile', variable=r, value=1).place(rely=0.5, relx=0.35)
-    Radiobutton(root, text='Custom Profile', variable=r, value=2).place(rely=0.6, relx=0.35)
+    Radiobutton(frame, text='Default 64-bit profile', variable=r, value=1).place(rely=0.5, relx=0.35)
+    Radiobutton(frame, text='Custom Profile', variable=r, value=2).place(rely=0.6, relx=0.35)
 
     # Default text in the input box
     input_pf.insert(0, "Enter info here")
@@ -54,8 +55,9 @@ def display_info() -> None:
     messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), and then fill out the box")
 
 
-def store_data() -> None:
-    """Store the data inputed in the textbox into a variable"""
+def store_data(profile_id: set, input_pf: Entry, r: IntVar, root: Tk) -> None:
+    """Store the data inputed in the textbox into profile_id by a mutating"""
+
     # If the input is 64-bit all int profile
     if r.get() == 1:
         all_int_64_prof = input_pf.get()
@@ -65,15 +67,16 @@ def store_data() -> None:
         else:
             # Change from str to int
             all_int_64_prof = int(all_int_64_prof)
-            # Perhaps call Decision Tree here
+            profile_id.add(all_int_64_prof)
     # IF the input is a custom profile input
     else:
         custom_prof = input_pf.get()
         if custom_prof.isalpha() is True:
             messagebox.showerror("Error", "Invalid input")
         else:
-            # Perhaps call Decision Tree here
-            ...
+            profile_id.add(custom_prof)
+
+    root.destroy()
 
 
 if __name__ == '__main__':

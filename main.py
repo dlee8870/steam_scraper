@@ -14,7 +14,10 @@ from input_data import run_tkinter
 #   - Reading data (done)
 #   - Computing on data
 #   - Display of data
-#   - main.py (has a main block to run entire program from start to finish.)
+#   - main.py (has a main block to run entire program from start to finish.)\
+
+def profile_id_to_top_games(user_id: int | str) -> list[int]:
+    """Given the user's profile id return a list of their top game ids"""
 
 
 if __name__ == '__main__':
@@ -23,7 +26,9 @@ if __name__ == '__main__':
     # Perform computations on the data
     # Produce an output
 
-    run_tkinter()
+    # Mutates profile_id
+    profile_id = set()
+    run_tkinter(profile_id)
 
     # 1. User is prompted to enter their profile_id using code in input_data.py
     # 2. Their profile_id is passed into scrape_app_ids() in scrape_app_ids.py which returns a set of app_ids
@@ -31,4 +36,3 @@ if __name__ == '__main__':
     # 4. Pass user_games into create_recommendation_network()
     # 5. Decision tree
     # 6. Output/Results
-

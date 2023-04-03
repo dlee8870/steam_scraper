@@ -793,7 +793,7 @@ def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -
     _display_stats_for_question(frame, last_question, percentage_of_positives, percentage_of_negatives, True)
 
     # Get the results
-    top_three = _get_results(order_of_games)
+    top_five = _get_results(order_of_games)
 
 def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
     """Based on the ordering of the games get the top three games combining likeability score and
@@ -808,22 +808,22 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
     # Getting the starting 3, note that there will always be atleast 1000 games in teh network
     # thus there must atleast one order which contains at least 3 games in it
     import random
-    starting_3 = random.choice(order_of_games).copy()
-    while len(starting_3) < 3:
-        starting_3 = random.choice(order_of_games).copy()
+    starting_5 = random.choice(order_of_games).copy()
+    while len(starting_5) < 5:
+        starting_5 = random.choice(order_of_games).copy()
 
     # The pop method for set removes and return random elements this is why I made a copy, so it does not mutate
-    top_three = [starting_3.pop(), starting_3.pop(), starting_3.pop()]
+    top_five = [starting_5.pop() for _ in range(0, 5)]
 
     for order in range(0, len(order_of_games)):
         for game in order_of_games[order]:
-            _compare_top_three(top_three, game, order + 1)
+            _compare_top_five(top_five, game, order + 1)
 
-    return top_three
+    return top_five
 
 
-def _compare_top_three(top_three: list[tuple[Game, int]], game: Game, order: int) -> None:
-    """Comapres the game witht the top_three if it has a higher score it will mutate top_three
+def _compare_top_five(top_five: list[tuple[Game, int]], game: Game, order: int) -> None:
+    """Comapres the game witht the top_five if it has a higher score it will mutate top_five
 
     The higher the index in top_three the higher the game score
 
@@ -831,12 +831,12 @@ def _compare_top_three(top_three: list[tuple[Game, int]], game: Game, order: int
     The higher the order the more similar the game is to the user's preferences
     """
 
-    for i in range(0, 3):
-        if _compare_games((game, order), top_three[i]):
+    for i in range(0, 5):
+        if _compare_games((game, order), top_five[i]):
             if i == 0:
-                top_three[0] = (game, order)
+                top_five[0] = (game, order)
             else:
-                top_three[i - 1], top_three[i] = top_three[i], top_three[i - 1]
+                top_five[i - 1], top_five[i] = top_five[i], top_five[i - 1]
         else:
             break
 
@@ -863,9 +863,105 @@ def _compare_games(game1: tuple[Game, int], game2: tuple[Game, int]) -> bool:
         return False
 
 
-def displaying_results(window: Tk) -> None:
-    """Displays the results using tkinter with the scores out of 10.
+def displaying_results(window: Tk, top_games: list[tuple[Game, int]]) -> None:
+    """Displays the results using tkinter with the scores out of 10 and other information.
     """
+
+    window.title("Serving Your Games!")
+    window.geometry("500x600")
+    window.resizable(False, False)
+
+    # Header Label
+    header = StringVar()
+    label_header = Label(window, textvariable=header, relief=FLAT)
+    label_header.config(font=('Helvetica bold', 26))
+    header.set(f"Your top 5 games")
+    label_header.pack(side=TOP)
+
+    frame1 = Frame(window)
+    frame1.pack()
+
+    # Game 1
+    game1, preference_score_1 = top_games[4][0], top_games[4][1] / 64
+    game1_stats = StringVar()
+    label_game1 = Label(frame1, textvariable=header, relief=FLAT)
+    label_game1.config(font=('Helvetica bold', 18))
+    game1_stats.set(f"Game #1: {game1.name}"
+                    f"Genres: {game1.genres}"
+                    f"Price: {game1.price}"
+                    f"Release Year: {game1.release_date}"
+                    f"Online: {game1.online}"
+                    f"Multiplayer: {game1.multiplayer}"
+                    f"General Likeability Score: {round((game1.likeability / 3) * 100, 1)}"
+                    f"User Likeability Score: {round(preference_score_1 * 100, 1)}"
+                    f"Total Score: {round(((game1.likeability + preference_score_1 * 5) / 8)) * 100, 1}")
+    label_game1.grid(row=0, column=0)
+
+    # Game 2
+    game2, preference_score_2 = top_games[3][0], top_games[3][1] / 64
+    game2_stats = StringVar()
+    label_game2 = Label(frame1, textvariable=header, relief=FLAT)
+    label_game2.config(font=('Helvetica bold', 18))
+    game2_stats.set(f"Game #2: {game2.name}"
+                    f"Genres: {game2.genres}"
+                    f"Price: {game2.price}"
+                    f"Release Year: {game2.release_date}"
+                    f"Online: {game2.online}"
+                    f"Multiplayer: {game2.multiplayer}"
+                    f"General Likeability Score: {round((game2.likeability / 3) * 100, 1)}"
+                    f"User Likeability Score: {round(preference_score_2 * 100, 1)}"
+                    f"Total Score: {round(((game2.likeability + preference_score_2 * 5) / 8)) * 100, 1}")
+    label_game2.grid(row=0, column=1)
+
+    # Game 3
+    game3, preference_score_3 = top_games[2][0], top_games[2][1] / 64
+    game3_stats = StringVar()
+    label_game3 = Label(frame1, textvariable=header, relief=FLAT)
+    label_game3.config(font=('Helvetica bold', 18))
+    game3_stats.set(f"Game #3: {game3.name}"
+                    f"Genres: {game3.genres}"
+                    f"Price: {game3.price}"
+                    f"Release Year: {game3.release_date}"
+                    f"Online: {game3.online}"
+                    f"Multiplayer: {game3.multiplayer}"
+                    f"General Likeability Score: {round((game3.likeability / 3) * 100, 1)}"
+                    f"User Likeability Score: {round(preference_score_3 * 100, 1)}"
+                    f"Total Score: {round(((game3.likeability + preference_score_3 * 5) / 8)) * 100, 1}")
+    label_game3.grid(row=0, column=1)
+
+    # Game 4
+    game4, preference_score_4 = top_games[1][0], top_games[1][1] / 64
+    game4_stats = StringVar()
+    label_game4 = Label(frame1, textvariable=header, relief=FLAT)
+    label_game4.config(font=('Helvetica bold', 18))
+    game4_stats.set(f"Game #4: {game4.name}"
+                    f"Genres: {game4.genres}"
+                    f"Price: {game4.price}"
+                    f"Release Year: {game4.release_date}"
+                    f"Online: {game4.online}"
+                    f"Multiplayer: {game4.multiplayer}"
+                    f"General Likeability Score: {round((game4.likeability / 3) * 100, 1)}"
+                    f"User Likeability Score: {round(preference_score_4 * 100, 1)}"
+                    f"Total Score: {round(((game4.likeability + preference_score_4 * 5) / 8)) * 100, 1}")
+    label_game4.grid(row=1, column=0)
+
+    # Game 5
+    game5, preference_score_5 = top_games[0][0], top_games[0][1] / 64
+    game5_stats = StringVar()
+    label_game5 = Label(frame1, textvariable=header, relief=FLAT)
+    label_game5.config(font=('Helvetica bold', 18))
+    game5_stats.set(f"Game #5: {game5.name}"
+                    f"Genres: {game5.genres}"
+                    f"Price: {game5.price}"
+                    f"Release Year: {game5.release_date}"
+                    f"Online: {game5.online}"
+                    f"Multiplayer: {game5.multiplayer}"
+                    f"General Likeability Score: {round((game5.likeability / 3) * 100, 1)}"
+                    f"User Likeability Score: {round(preference_score_5 * 100, 1)}"
+                    f"Total Score: {round(((game5.likeability + preference_score_5 * 5) / 8)) * 100, 1}")
+    label_game5.grid(row=1, column=1)
+
+    window.mainloop()
 
 
 if __name__ == '__main__':
