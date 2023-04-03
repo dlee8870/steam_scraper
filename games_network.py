@@ -12,7 +12,9 @@ This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
 
 from __future__ import annotations
 from queue import Queue
-import math
+from scrape_profile_ids import scrape_profile_ids
+from scrape_app_ids import scrape_app_ids
+from scrape_game_data import get_game_data
 
 
 class Game:
@@ -216,18 +218,40 @@ def create_recommendation_network(user_games: dict[Game, int],
     while not games_queue.empty() and network.num_games < num_recommendations:
         game = games_queue.get_nowait()
         visited_games.add(game)
+        app_id = user_games[game]
 
-        # TODO: Andy's function in place for the empty list return a list of recommended games given game
-        # TODO: Andy get weight, calculated based on how many reviews recommended the game
-        # TODO: Returns a list of dictionary keys are the game class, and values the number of times it was recommeded
-        recommendations = []
+        recommendations = recommendation_network_helper(app_id)
 
         for recommended_game in recommendations:
-            network.add_recommendation(game, recommended_game)  # TODO: figure out weight
+            network.add_recommendation(game, recommended_game)
             if recommended_game not in visited_games:
                 games_queue.put_nowait(recommended_game)
 
     return network
+
+
+def recommendation_network_helper(app_id: int) -> dict:
+    """Obtains a list of recommendations whose keys are the recommended game and the
+    values are the number of times it appears in a user's review.
+
+    Preconditions:
+    - app_id is a valid game ID on Steam
+    """
+    user_ids = scrape_profile_ids(app_id, 5)
+
+    recommendations = {}
+
+    for user_id in user_ids:
+        game_app_ids = scrape_app_ids(user_id, 5)
+
+        for game_app_id in game_app_ids:
+            game = get_game_data(game_app_id)
+            if (app_id, game) in recommendations:
+                recommendations[(app_id, game)] += 1
+            else:
+                recommendations[(app_id, game)] = 1
+
+    return recommendations
 
 
 if __name__ == '__main__':
