@@ -921,7 +921,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Online: {game2.online}\n"
                     f"Multiplayer: {game2.multiplayer}\n"
                     f"Game Score: {round(((game2.likeability / 3 + preference_score_2 * 5) / 6) * 100, 1)}%\n")
-    label_game2.grid(row=0, column=1, pady=(0, 15))
+    label_game2.grid(row=0, column=1, pady=(0, 15), padx=(15, 0))
 
     # Game 3
     game3, preference_score_3 = top_games[2][0], top_games[2][1] / 64
