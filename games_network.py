@@ -250,6 +250,8 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
                         recommendations[app_id_to_game[app_id]] = 1
                     else:
                         recommendations[app_id_to_game[app_id]] += 1
+                        network.add_recommendation(app_id_to_game[curr_app_id], app_id_to_game[app_id],
+                                                   recommendations[app_id_to_game[app_id]])
 
     return network
 
