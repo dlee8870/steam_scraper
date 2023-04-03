@@ -26,9 +26,6 @@ def scrape_app_ids(profile_id: int, n: int) -> list[int]:
     >>> scrape_app_ids(76561199000093113, 2)
     [252950, 1172470]
     """
-    if isinstance(profile_id, str):
-        profile_id = convert_to_64bit(profile_id)
-
     params = {
         'key': '4957E3F30616447A483A7DBA9F26172E',
         'steamid': str(profile_id),
@@ -62,9 +59,6 @@ def scrape_app_ids_all(profile_id: int) -> list[int]:
     >>> app_ids2 = scrape_app_ids(76561199000093113)
     len(app_ids2) == 42
     """
-    if isinstance(profile_id, str):
-        profile_id = convert_to_64bit(profile_id)
-
     params = {
         'key': '4957E3F30616447A483A7DBA9F26172E',
         'steamid': str(profile_id),
@@ -91,25 +85,6 @@ def get_json_response(params: dict) -> requests.models.Response.json:
     url = 'http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/'
     response = requests.get(url, params)
     return response.json()['response']
-
-
-def convert_to_64bit(profile_id: str) -> int:
-    """Helper function for scrape_app_ids().
-    Given a custom SteamID, this function returns the 64-bit representation of the SteamID.
-
-    Preconditions:
-        - profile_id is a custom SteamID
-
-    >>> convert_to_64bit('star_19642')
-    76561199000093113
-    """
-    url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/'
-    params = {
-        'key': '4957E3F30616447A483A7DBA9F26172E',
-        'vanityurl': profile_id
-    }
-    response = requests.get(url, params).json()
-    return int(response['response']['steamid'])
 
 
 if __name__ == '__main__':

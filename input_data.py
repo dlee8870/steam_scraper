@@ -9,10 +9,11 @@ Copyright and Usage Information
 ===============================
 This file is Copyright (c) 2023 Daniel Lee, Andy Zhang, Chris Oh, Ahmed Hassini
 """
-
+import requests
 from __future__ import annotations
 from tkinter import *
 from tkinter import messagebox
+
 
 def run_tkinter(profile_id: list) -> None:
     """Run the Tkinter application"""
@@ -74,9 +75,28 @@ def store_data(profile_id: list, input_pf: Entry, r: IntVar, root: Tk) -> None:
         if custom_prof.isalpha() is True:
             messagebox.showerror("Error", "Invalid input")
         else:
-            profile_id.append(custom_prof)
+            profile_id.append(convert_to_64bit(custom_prof))
 
     root.destroy()
+
+
+def convert_to_64bit(profile_id: str) -> int:
+    """Helper function for scrape_app_ids().
+    Given a custom SteamID, this function returns the 64-bit representation of the SteamID.
+
+    Preconditions:
+        - profile_id is a custom SteamID
+
+    >>> convert_to_64bit('star_19642')
+    76561199000093113
+    """
+    url = 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/'
+    params = {
+        'key': '4957E3F30616447A483A7DBA9F26172E',
+        'vanityurl': profile_id
+    }
+    response = requests.get(url, params).json()
+    return int(response['response']['steamid'])
 
 
 if __name__ == '__main__':
