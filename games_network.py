@@ -224,7 +224,8 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
     network = RecommendedGamesNetwork()
 
     visited_app_ids = set()
-    q = Queue()
+    visited_profile_ids = set()
+    q = Queue()  # Queue of app ids
 
     for app_id in app_id_to_game:
         visited_app_ids.add(app_id)  # Adding starting games to visited
@@ -235,11 +236,19 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
     #  Exit if the queue is empty (Occurs when not enough reviews on games were found)
     while not q.empty() and network.num_games < num_recommendations:
         print(network.num_games)
-
         app_id = q.get_nowait()
         visited_app_ids.add(app_id)
+        profile_ids = scrape_profile_ids(app_id, 5)
 
-        recommendations = recommendation_network_helper(app_id)
+        for profile_id in profile_ids:
+            if profile_id not in visited_profile_ids and network.num_games < num_recommendations:
+                app_ids = scrape_app_ids(profile_id, 5)
+                visited_profile_ids.add(profile_id)
+                for app_id in app_ids:
+                    if app_id not in visited_app_ids:
+                        q.put_nowait(app_id)
+                        network.add_game(get_game_data(app_id))
+
         # Get the total number of recommended games, including duplicates
         total_weight = sum(recommendations[app] for app in recommendations)
 
@@ -259,29 +268,6 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
                 q.put_nowait(recommended_game)
 
     return network
-
-
-def recommendation_network_helper(app_id: int) -> dict:
-    """Obtains a list of recommendations whose keys are the recommended game and the
-    values are the number of times it appears in a user's review.
-
-    Preconditions:
-    - app_id is a valid game ID on Steam
-    """
-    user_ids = scrape_profile_ids(app_id, 5)
-
-    recommendations = {}
-
-    for user_id in user_ids:
-        game_app_ids = scrape_app_ids(user_id, 5)
-
-        for game_app_id in game_app_ids:
-            if game_app_id in recommendations:
-                recommendations[game_app_id] += 1
-            else:
-                recommendations[game_app_id] = 1
-
-    return recommendations
 
 
 def get_game_data(app_id: int) -> Game:
