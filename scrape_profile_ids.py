@@ -3,7 +3,6 @@
 Module Description
 ===============================
 This module contains necessary code to scrape profile ids from reviews for a given game.
-Main documentation utilized: https://partner.steamgames.com/doc/store/getreviews
 
 Copyright and Usage Information
 ===============================
