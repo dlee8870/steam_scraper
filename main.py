@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     for app_id in app_ids:
         game = get_game_data(app_id)
-        user_games[game] = app_id
+        user_games[app_id] = game
 
     # 3. Pass user_games into create_recommendation_network()
     games_network = create_recommendation_network(user_games)
