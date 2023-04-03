@@ -216,7 +216,7 @@ class RecommendedGamesNetwork:
 
 
 def create_recommendation_network(id_to_game: dict[int, Game],
-                                  num_recommendations: int = 110) -> RecommendedGamesNetwork:
+                                  num_recommendations: int = 90) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
     returning a complete recommended game network
@@ -310,7 +310,7 @@ def get_game_data(app_id: int) -> Game:
     name = soup.select_one("div.apphub_AppName").text.strip()
 
     # Get game description
-    description = soup.find('div', {'class': 'game_description_snippet'}).text.strip()
+    description = soup.select_one('div', {'class': 'game_description_snippet'}).text.strip()
 
     # Get game genres
     genres = {genre.text.strip() for genre in soup.select("a.app_tag")}

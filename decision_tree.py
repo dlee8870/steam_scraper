@@ -255,20 +255,16 @@ class _Questions:
             self.genres.add(line.removesuffix("\n").lower())
             line = file.readline()
 
-    def ask_questions(self) -> Tk:
+    def ask_questions(self) -> None:
         """Runs the chain of functions asking the user questions as well as ranking priority of questions
-        Returns the used window
         """
 
         self._get_genres()
-
-        return self.window
 
     def _clear_window(self, frame: Frame, widgets: set[Any] | None) -> None:
         """Clears the frame of the window
         If there are extra widgets outside the frame it will erase them as well
         """
-
         frame.destroy()
 
         if widgets is not None:
@@ -298,7 +294,7 @@ class _Questions:
             self._get_online()
         elif question_name == "Online":
             self._get_multiplayer()
-        elif question_name == "Multiplayer":
+        else:
             self._rank_questions()
 
     def _add_genre(self, genre_entry: Entry, users_genres: set[str], suggestion_str: StringVar, frame: Frame,
@@ -538,7 +534,7 @@ class _Questions:
         # No button
         offline_message = StringVar(value="You do not prefer multiplayer games")
         no_button = Button(frame, text="No", command=lambda: self._next_question(frame,
-                                                                                 offline_message, True, "Multiplayer"))
+                                                                                 offline_message, False, "Multiplayer"))
         no_button.pack(pady=(200, 0), side=RIGHT)
 
         self.window.mainloop()
@@ -648,11 +644,14 @@ class _Questions:
         up_button_5.grid(row=5, column=1, pady=10)
 
         # Ends the questionnaire
-        next_button = Button(self.window, text="Get Recommendations", command=lambda: self._clear_window(
-            frame, {label_question, next_button}))
+        next_button = Button(self.window, text="Get Recommendations", command=self._desrtroy_window())
         next_button.pack(side=BOTTOM, pady=(0, 100))
 
         self.window.mainloop()
+
+    def _desrtroy_window(self) -> None:
+        """Destroys the window"""
+        self.window.destroy()
 
 
 def displaying_questions() -> Tk:
@@ -664,7 +663,7 @@ def displaying_questions() -> Tk:
 
     questions = _Questions()
 
-    return questions.ask_questions()
+    questions.ask_questions()
 
 
 def destroy_frame(frame: Frame) -> None:

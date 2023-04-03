@@ -8,6 +8,7 @@ This file is Copyright (c) 2023 Chris Oh, Ahmed Hassini, Andy Zhang, Daniel Lee
 """
 
 from input_data import run_tkinter
+from tkinter import Tk
 from scrape_app_ids import scrape_app_ids
 from games_network import *
 from decision_tree import *
@@ -36,7 +37,10 @@ if __name__ == '__main__':
     # This function will take some time
     network = create_recommendation_network(app_id_to_game)
 
-    window = displaying_questions()
+    displaying_questions()
+
+    # Creating new window
+    window = Tk()
 
     top_games = display_decision_tree(window, network.get_games(), set(app_id_to_game.values()))
 
