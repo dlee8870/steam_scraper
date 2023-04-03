@@ -57,6 +57,8 @@ class DecisionTree:
         self.question_num = question_num
         if user_games is not None:
             self.games = games - user_games
+        else:
+            self.games = set()
         self.true_branch = None
         self.false_branch = None
 
