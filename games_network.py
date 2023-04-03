@@ -215,7 +215,7 @@ class RecommendedGamesNetwork:
             game.update_game_likeability(self.max_tributes)
 
 
-def create_recommendation_network(app_id_to_game: dict[int, Game],
+def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
                                   num_recommendations: int = 20) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
@@ -225,14 +225,15 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
 
     visited_profile_ids = set()
     q = Queue()  # Queue of app ids
-    recommendations = {}
+    app_id_to_game = user_app_ids_to_games.copy()
 
-    for app_id in app_id_to_game:
+    for app_id in user_app_ids_to_games:
         q.put_nowait(app_id)  # Adding starting games to queue
-        network.add_game(app_id_to_game[app_id])  # Adding starting games to network
+        network.add_game(user_app_ids_to_games[app_id])  # Adding starting games to network
 
     #  Keep looping till we added num_recommendations in the network
     #  Exit if the queue is empty (Occurs when not enough reviews on games were found)
+    app_ids_to_appearances = {}
     while not q.empty() and network.num_games < num_recommendations:
         print(network.num_games)
         curr_app_id = q.get_nowait()
@@ -243,14 +244,17 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
                 app_ids = scrape_app_ids(profile_id, 5)
                 visited_profile_ids.add(profile_id)
                 for app_id in app_ids:
-                    if app_id not in recommendations:
+                    if app_id not in app_ids_to_appearances:
                         q.put_nowait(app_id)
                         app_id_to_game[app_id] = get_game_data(app_id)
-                        recommendations[app_id_to_game[app_id]] = 1
+                        app_ids_to_appearances[app_id_to_game[app_id]] = 1
                     else:
-                        recommendations[app_id_to_game[app_id]] += 1
-                    network.add_recommendation(app_id_to_game[curr_app_id], app_id_to_game[app_id],
-                                               recommendations[app_id_to_game[app_id]] / len(recommendations))
+                        app_ids_to_appearances[app_id_to_game[app_id]] += 1
+
+                    total_game_appearances = sum([app_ids_to_appearances[key] for key in app_ids_to_appearances])
+                    network.add_recommendation(app_id_to_game[curr_app_id],
+                                               app_id_to_game[app_id],
+                                               app_ids_to_appearances[app_id_to_game[app_id]] / total_game_appearances)
 
     return network
 
