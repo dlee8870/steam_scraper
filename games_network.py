@@ -247,6 +247,9 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
                         q.put_nowait(app_id)
                         app_id_to_game[app_id] = get_game_data(app_id)
                         network.add_recommendation(app_id_to_game[curr_app_id], app_id_to_game[app_id], 0)
+                        recommendations[app_id_to_game[app_id]] = 1
+                    else:
+                        recommendations[app_id_to_game[app_id]] += 1
 
     return network
 
