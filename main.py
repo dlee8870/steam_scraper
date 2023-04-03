@@ -6,18 +6,17 @@ Copyright and Usage Information
 ===============================
 This file is Copyright (c) 2023 Chris Oh, Ahmed Hassini, Andy Zhang, Daniel Lee
 """
-from scrape_app_ids import scrape_app_ids
-from games_network import create_recommendation_network
+
 from input_data import run_tkinter
+from scrape_app_ids import scrape_app_ids
+from games_network import *
+from decision_tree import *
 
 # Note to self: Need to split up program into the following files according to assignment page:
 #   - Reading data (done)
 #   - Computing on data
 #   - Display of data
-#   - main.py (has a main block to run entire program from start to finish.)\
-
-def profile_id_to_top_games(user_id: int | str) -> list[int]:
-    """Given the user's profile id return a list of their top game ids"""
+#   - main.py (has a main block to run entire program from start to finish.)
 
 
 if __name__ == '__main__':
@@ -27,8 +26,21 @@ if __name__ == '__main__':
     # Produce an output
 
     # Mutates profile_id
-    profile_id = set()
+    profile_id = list()
     run_tkinter(profile_id)
+
+    game_app_ids_user = scrape_app_ids(profile_id, 6)
+
+    app_id_to_game = {app_id: get_game_data(app_id) for app_id in game_app_ids_user}
+
+    netowrk = create_recommendation_network(app_id_to_game)
+
+    window = displaying_questions()
+
+    display_decision_tree(window, netowrk.get_games(), set(app_id_to_game.values()))
+
+
+
 
     # 1. User is prompted to enter their profile_id using code in input_data.py
     # 2. Their profile_id is passed into scrape_app_ids() in scrape_app_ids.py which returns a set of app_ids

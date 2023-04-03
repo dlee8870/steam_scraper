@@ -14,7 +14,7 @@ from __future__ import annotations
 from tkinter import *
 from tkinter import messagebox
 
-def run_tkinter(profile_id: set) -> None:
+def run_tkinter(profile_id: list) -> None:
     """Run the Tkinter application"""
     root = Tk()
     root.geometry("500x600")
@@ -52,10 +52,11 @@ def run_tkinter(profile_id: set) -> None:
 
 def display_info() -> None:
     """Give instructions on how to operate menu"""
-    messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), then fill out the input box with your profile ID.")
+    messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), "
+                                    "then fill out the input box with your profile ID.")
 
 
-def store_data(profile_id: set, input_pf: Entry, r: IntVar, root: Tk) -> None:
+def store_data(profile_id: list, input_pf: Entry, r: IntVar, root: Tk) -> None:
     """Store the data inputed in the textbox into profile_id by a mutating"""
 
     # If the input is 64-bit all int profile
@@ -67,14 +68,14 @@ def store_data(profile_id: set, input_pf: Entry, r: IntVar, root: Tk) -> None:
         else:
             # Change from str to int
             all_int_64_prof = int(all_int_64_prof)
-            profile_id.add(all_int_64_prof)
+            profile_id.append(all_int_64_prof)
     # IF the input is a custom profile input
     else:
         custom_prof = input_pf.get()
         if custom_prof.isalpha() is True:
             messagebox.showerror("Error", "Invalid input")
         else:
-            profile_id.add(custom_prof)
+            profile_id.append(custom_prof)
 
     root.destroy()
 

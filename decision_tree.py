@@ -255,10 +255,14 @@ class _Questions:
             self.genres.add(line.removesuffix("\n").lower())
             line = file.readline()
 
-    def ask_questions(self) -> None:
-        """Runs the chain of functions asking the user questions as well as ranking priority of questions"""
+    def ask_questions(self) -> Tk:
+        """Runs the chain of functions asking the user questions as well as ranking priority of questions
+        Returns the used window
+        """
 
         self._get_genres()
+
+        return self.window
 
     def _clear_window(self, frame: Frame, widgets: set[Any] | None) -> None:
         """Clears the frame of the window
@@ -651,16 +655,16 @@ class _Questions:
         self.window.mainloop()
 
 
-def displaying_questions() -> None:
+def displaying_questions() -> Tk:
     """Displays the questions that will be used to filter the decision tree,
     asks user to adjust answers and to rank the priority of the questions
 
-    updates the global variable QUESTIONS and USER_ANSWERS
+    updates the global variable QUESTIONS_TO_ANSWERS
     """
 
     questions = _Questions()
 
-    questions.ask_questions()
+    return questions.ask_questions()
 
 
 def destroy_frame(frame: Frame) -> None:

@@ -181,6 +181,11 @@ class RecommendedGamesNetwork:
         """
         return {game: game.likeability for game in self._games.values()}
 
+    def get_games(self) -> set[Game]:
+        """Returns a set of the games in the network."""
+
+        return set(self._games.values())
+
     def update_edge_weight(self, init_game: str, recommended_game: str, new_weight: float) -> None:
         """Update the weight of the edge between init_game and recommended_game to new_weight.
 
