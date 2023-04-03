@@ -11,12 +11,14 @@ This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
 """
 
 from __future__ import annotations
+from typing import Optional, Any
+from queue import Queue
 import math
 import time
 from tkinter import *
+import random
 from games_network import *
-from typing import Optional, Any
-from queue import Queue
+
 
 # This is a list of tuples where the first element is the question and the second element is the user's answer
 QUESTIONS_TO_ANSWERS = []
@@ -234,6 +236,7 @@ class _Questions:
     window: Tk
     genres_counter: int
     genres: set[str]
+    question_index: int
 
     def __init__(self) -> None:
         self.window = Tk()
@@ -558,7 +561,7 @@ class _Questions:
         swap_quest.set(f"Rank {index + offset + 1}: {QUESTIONS_TO_ANSWERS[index + offset][0]}")
         self.window.update()
 
-    def _rank_questions(self):
+    def _rank_questions(self) -> None:
         """Ranks the order of the questions, the higher the question the more important it is."""
 
         frame = Frame(self.window)
@@ -659,10 +662,12 @@ def displaying_questions() -> None:
 
     questions.ask_questions()
 
+
 def destroy_frame(frame: Frame) -> None:
     """Destroys the frame"""
 
     frame.destroy()
+
 
 def _display_stats_for_question(frame: Frame, question: str,
                                 positive_per: float, negative_per: float, get_results: bool) -> None:
@@ -795,6 +800,7 @@ def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -
     # Get the results
     top_five = _get_results(order_of_games)
 
+
 def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
     """Based on the ordering of the games get the top three games combining likeability score and
     the ordering done by the decision tree.
@@ -807,7 +813,6 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
     """
     # Getting the starting 3, note that there will always be atleast 1000 games in teh network
     # thus there must atleast one order which contains at least 3 games in it
-    import random
     starting_5 = random.choice(order_of_games).copy()
     while len(starting_5) < 5:
         starting_5 = random.choice(order_of_games).copy()
@@ -839,6 +844,7 @@ def _compare_top_five(top_five: list[tuple[Game, int]], game: Game, order: int) 
                 top_five[i - 1], top_five[i] = top_five[i], top_five[i - 1]
         else:
             break
+
 
 def _compare_games(game1: tuple[Game, int], game2: tuple[Game, int]) -> bool:
     """Given two game and its order return true if game 1 should be higher up
@@ -971,7 +977,9 @@ if __name__ == '__main__':
 
     doctest.testmod()
     python_ta.check_all(config={
-        'extra-imports': [],  # the names (strs) of imported modules
-        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'extra-imports': ['typing', 'queue', 'math', 'time', 'tkinter', 'games_network', 'random'],
+        'allowed-io': [],
+        'disable': ['wildcard-import', 'too-many-arguments', 'unnecessary-lambda', 'too-many-locals',
+                    'too-many-statements'],
         'max-line-length': 120
     })
