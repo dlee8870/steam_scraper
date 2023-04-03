@@ -60,8 +60,9 @@ def store_data():
         if len(all_int_64_prof) != 17 or all(letter.isnumeric() for letter in all_int_64_prof) is False:
             messagebox.showerror("Error", "Invalid input")
         else:
+            # Change from str to int
+            all_int_64_prof = int(all_int_64_prof)
             # Perhaps call Decision Tree here
-            ...
     # IF the input is a custom profile input
     else:
         custom_prof = input_pf.get()
