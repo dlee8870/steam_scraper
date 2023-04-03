@@ -217,7 +217,7 @@ class RecommendedGamesNetwork:
 
 
 def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
-                                  num_recommendations: int = 320) -> RecommendedGamesNetwork:
+                                  num_recommendations: int = 111) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
     returning a complete recommended game network
@@ -238,6 +238,7 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
     while not q.empty() and network.num_games < num_recommendations:
         curr_app_id = q.get_nowait()
         profile_ids = scrape_profile_ids(curr_app_id, 5)
+        print(f"Completeness: {round((network.num_games / num_recommendations) * 100, 1)}")
 
         for profile_id in profile_ids:
             if profile_id not in visited_profile_ids and network.num_games < num_recommendations:
@@ -247,9 +248,12 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
                     if app_id not in app_ids_to_appearances:
                         q.put_nowait(app_id)
                         get_game = get_game_data(app_id)
-                        if get_game is not None:
-                            app_id_to_game[app_id] = get_game_data(app_id)
-                            app_ids_to_appearances[app_id] = 1
+                        if get_game is None:
+                            continue
+                        app_id_to_game[app_id] = get_game_data(app_id)
+                        print(app_id_to_game[app_id].online, app_id_to_game[app_id].multiplayer,
+                              app_id_to_game[app_id].likeability)
+                        app_ids_to_appearances[app_id] = 1
                     else:
                         app_ids_to_appearances[app_id] += 1
 
@@ -257,6 +261,8 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
                     network.add_recommendation(app_id_to_game[curr_app_id],
                                                app_id_to_game[app_id],
                                                app_ids_to_appearances[app_id] / total_game_appearances)
+
+    network.update_games_likeability()
 
     return network
 

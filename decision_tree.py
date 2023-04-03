@@ -885,8 +885,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     """
     window = Tk()
     window.title("Serving Your Games!")
-    window.geometry("500x600")
-    window.resizable(False, False)
+    window.geometry("800x600")
 
     # Header Label
     header = StringVar()
@@ -908,9 +907,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game1.release_date}\n"
                     f"Online: {game1.online}\n"
                     f"Multiplayer: {game1.multiplayer}\n"
-                    f"General Likeability Score: {round((game1.likeability / 3) * 100, 1)}\n"
-                    f"User Likeability Score: {round(preference_score_1 * 100, 1)}\n"
-                    f"Total Score: {round(((game1.likeability + preference_score_1 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game1.likeability + preference_score_1 * 5) / 8)) * 100, 1}\n")
     label_game1.grid(row=0, column=0)
 
     # Game 2
@@ -923,9 +920,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game2.release_date}\n"
                     f"Online: {game2.online}\n"
                     f"Multiplayer: {game2.multiplayer}\n"
-                    f"General Likeability Score: {round((game2.likeability / 3) * 100, 1)}\n"
-                    f"User Likeability Score: {round(preference_score_2 * 100, 1)}\n"
-                    f"Total Score: {round(((game2.likeability + preference_score_2 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game2.likeability + preference_score_2 * 5) / 8)) * 100, 1}\n")
     label_game2.grid(row=0, column=1)
 
     # Game 3
@@ -938,10 +933,8 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game3.release_date}\n"
                     f"Online: {game3.online}\n"
                     f"Multiplayer: {game3.multiplayer}\n"
-                    f"General Likeability Score: {round((game3.likeability / 3) * 100, 1)}\n"
-                    f"User Likeability Score: {round(preference_score_3 * 100, 1)}\n"
-                    f"Total Score: {round(((game3.likeability + preference_score_3 * 5) / 8)) * 100, 1}\n")
-    label_game3.grid(row=0, column=1)
+                    f"Game Score: {round(((game3.likeability + preference_score_3 * 5) / 8)) * 100, 1}\n")
+    label_game3.grid(row=0, column=2)
 
     # Game 4
     game4, preference_score_4 = top_games[1][0], top_games[1][1] / 64
@@ -953,9 +946,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game4.release_date}\n"
                     f"Online: {game4.online}\n"
                     f"Multiplayer: {game4.multiplayer}\n"
-                    f"General Likeability Score: {round((game4.likeability / 3) * 100, 1)}\n"
-                    f"User Likeability Score: {round(preference_score_4 * 100, 1)}\n"
-                    f"Total Score: {round(((game4.likeability + preference_score_4 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game4.likeability + preference_score_4 * 5) / 8)) * 100, 1}\n")
     label_game4.grid(row=1, column=0)
 
     # Game 5
@@ -968,9 +959,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game5.release_date}\n"
                     f"Online: {game5.online}\n"
                     f"Multiplayer: {game5.multiplayer}\n"
-                    f"General Likeability Score: {round((game5.likeability / 3) * 100, 1)}\n"
-                    f"User Likeability Score: {round(preference_score_5 * 100, 1)}\n"
-                    f"Total Score: {round(((game5.likeability + preference_score_5 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game5.likeability + preference_score_5 * 5) / 8)) * 100, 1}\n")
     label_game5.grid(row=1, column=1)
 
     window.mainloop()
