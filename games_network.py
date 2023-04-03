@@ -216,7 +216,7 @@ class RecommendedGamesNetwork:
 
 
 def create_recommendation_network(id_to_game: dict[int, Game],
-                                  num_recommendations: int = 10) -> RecommendedGamesNetwork:
+                                  num_recommendations: int = 20) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
     returning a complete recommended game network
@@ -225,7 +225,7 @@ def create_recommendation_network(id_to_game: dict[int, Game],
 
     #  Creating a new queue of the games to be added
     #  num_recommendations represents the maximum possible size of the queue (Optional)
-    ids_queue = Queue(num_recommendations)
+    ids_queue = Queue()
     visited_ids = set()
 
     for idd in id_to_game:
