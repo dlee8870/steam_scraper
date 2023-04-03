@@ -16,9 +16,9 @@ def scrape_profile_ids(app_id: int, n: int) -> list[int]:
     """Return a list of the users corresponding to the top n most helpful reviews of the game.
 
     Preconditions:
-        - n >= 0
+        - n > 0
 
-    >>> scrape_profile_ids(730, 2)
+    >>> scrape_profile_ids(730, 2) # Returns the top 2 reviews for CSGO
     ['76561198110513339', '76561198388416030']
     """
     params = {
