@@ -86,7 +86,7 @@ class Game:
         for tribute in self.tributes:
             accumulated_weight += tribute.recommended_games[self]
 
-        if len(self.tributes):
+        if len(self.tributes) == 0:
             tributes_weight = 0
         else:
             tributes_weight = accumulated_weight / len(self.tributes)

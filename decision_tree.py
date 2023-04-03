@@ -885,7 +885,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     """
     window = Tk()
     window.title("Serving Your Games!")
-    window.geometry("800x600")
+    window.geometry("800x400")
 
     # Header Label
     header = StringVar()
@@ -900,66 +900,66 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     # Game 1
     game1, preference_score_1 = top_games[4][0], top_games[4][1] / 64
     game1_stats = StringVar()
-    label_game1 = Label(frame1, textvariable=game1_stats, relief=FLAT)
+    label_game1 = Label(frame1, textvariable=game1_stats, relief=SOLID)
     label_game1.config(font=('Helvetica bold', 12))
     game1_stats.set(f"Game #1: {game1.name}\n"
                     f"Price: {game1.price}\n"
                     f"Release Year: {game1.release_date}\n"
                     f"Online: {game1.online}\n"
                     f"Multiplayer: {game1.multiplayer}\n"
-                    f"Game Score: {round(((game1.likeability + preference_score_1 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game1.likeability + preference_score_1 * 5) / 8) * 100, 1)}\n")
     label_game1.grid(row=0, column=0)
 
     # Game 2
     game2, preference_score_2 = top_games[3][0], top_games[3][1] / 64
     game2_stats = StringVar()
-    label_game2 = Label(frame1, textvariable=game2_stats, relief=FLAT)
+    label_game2 = Label(frame1, textvariable=game2_stats, relief=SOLID)
     label_game2.config(font=('Helvetica bold', 12))
     game2_stats.set(f"Game #2: {game2.name}\n"
                     f"Price: {game2.price}\n"
                     f"Release Year: {game2.release_date}\n"
                     f"Online: {game2.online}\n"
                     f"Multiplayer: {game2.multiplayer}\n"
-                    f"Game Score: {round(((game2.likeability + preference_score_2 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game2.likeability + preference_score_2 * 5) / 8) * 100, 1)}\n")
     label_game2.grid(row=0, column=1)
 
     # Game 3
     game3, preference_score_3 = top_games[2][0], top_games[2][1] / 64
     game3_stats = StringVar()
-    label_game3 = Label(frame1, textvariable=game3_stats, relief=FLAT)
+    label_game3 = Label(frame1, textvariable=game3_stats, relief=SOLID)
     label_game3.config(font=('Helvetica bold', 12))
     game3_stats.set(f"Game #3: {game3.name}\n"
                     f"Price: {game3.price}\n"
                     f"Release Year: {game3.release_date}\n"
                     f"Online: {game3.online}\n"
                     f"Multiplayer: {game3.multiplayer}\n"
-                    f"Game Score: {round(((game3.likeability + preference_score_3 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game3.likeability + preference_score_3 * 5) / 8) * 100, 1)}\n")
     label_game3.grid(row=0, column=2)
 
     # Game 4
     game4, preference_score_4 = top_games[1][0], top_games[1][1] / 64
     game4_stats = StringVar()
-    label_game4 = Label(frame1, textvariable=game4_stats, relief=FLAT)
+    label_game4 = Label(frame1, textvariable=game4_stats, relief=SOLID)
     label_game4.config(font=('Helvetica bold', 12))
     game4_stats.set(f"Game #4: {game4.name}\n"
                     f"Price: {game4.price}\n"
                     f"Release Year: {game4.release_date}\n"
                     f"Online: {game4.online}\n"
                     f"Multiplayer: {game4.multiplayer}\n"
-                    f"Game Score: {round(((game4.likeability + preference_score_4 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game4.likeability + preference_score_4 * 5) / 8) * 100, 1)}\n")
     label_game4.grid(row=1, column=0)
 
     # Game 5
     game5, preference_score_5 = top_games[0][0], top_games[0][1] / 64
     game5_stats = StringVar()
-    label_game5 = Label(frame1, textvariable=game5_stats, relief=FLAT)
+    label_game5 = Label(frame1, textvariable=game5_stats, relief=SOLID)
     label_game5.config(font=('Helvetica bold', 12))
     game5_stats.set(f"Game #5: {game5.name}\n"
                     f"Price: {game5.price}\n"
                     f"Release Year: {game5.release_date}\n"
                     f"Online: {game5.online}\n"
                     f"Multiplayer: {game5.multiplayer}\n"
-                    f"Game Score: {round(((game5.likeability + preference_score_5 * 5) / 8)) * 100, 1}\n")
+                    f"Game Score: {round(((game5.likeability + preference_score_5 * 5) / 8) * 100, 1)}\n")
     label_game5.grid(row=1, column=1)
 
     window.mainloop()
