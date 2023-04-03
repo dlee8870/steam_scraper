@@ -13,38 +13,70 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 import requests
 
 
-def scrape_profile_ids(app_id: int, n: int) -> list[int]:
-    """Return a list of the users corresponding to the top n most helpful reviews of the game.
+# def scrape_profile_ids(app_id: int, n: int) -> list[int]:
+#     """Return a list of the users corresponding to the top n most helpful reviews of the game.
+#
+#     Preconditions:
+#         - n >= 0
+#
+#     >>> scrape_profile_ids(730, 2)
+#     ['76561198110513339', '76561198388416030']
+#     """
+#     params = {
+#         'json': 1,
+#         'filter': 'all',
+#         'language': 'english',
+#         'day_range': 101010101010101010101010101010,
+#         'cursor': '*'.encode(),
+#         'review_type': 'positive',
+#         'purchase_type': 'all',
+#         'num_per_page': 100
+#     }
+#
+#     reviews = []
+#
+#     while n > 0:
+#         params['num_per_page'] = min(n, 100)  # each response cursor yields at most 100 reviews
+#         n -= 100
+#         response = get_json_response(app_id, params)
+#         if "cursor" not in response:
+#             return []
+#         params['cursor'] = response['cursor'].encode()
+#         reviews += response['reviews']
+#
+#     return [int(review['author']['steamid']) for review in reviews]
+#
 
-    Preconditions:
-        - n >= 0
+def get_reviews(appid, params={'json': 1}):
+    url = 'https://store.steampowered.com/appreviews/'
+    response = requests.get(url=url + appid, params=params, headers={'User-Agent': 'Mozilla/5.0'})
+    return response.json()
 
-    >>> scrape_profile_ids(730, 2)
-    ['76561198110513339', '76561198388416030']
-    """
+
+def scrape_profile_ids(app_id, n):
+    reviews = []
+    cursor = '*'
     params = {
         'json': 1,
         'filter': 'all',
         'language': 'english',
-        'day_range': 101010101010101010101010101010,
-        'cursor': '*'.encode(),
-        'review_type': 'positive',
-        'purchase_type': 'all',
-        'num_per_page': 100
+        'day_range': 9223372036854775807,
+        'review_type': 'all',
+        'purchase_type': 'all'
     }
 
-    reviews = []
-
     while n > 0:
-        params['num_per_page'] = min(n, 100)  # each response cursor yields at most 100 reviews
+        params['cursor'] = cursor.encode()
+        params['num_per_page'] = min(100, n)
         n -= 100
-        response = get_json_response(app_id, params)
-        if "cursor" not in response:
-            return []
-        params['cursor'] = response['cursor'].encode()
+
+        response = get_reviews(app_id, params)
+        cursor = response['cursor']
         reviews += response['reviews']
 
-    return [int(review['author']['steamid']) for review in reviews]
+        if len(response['reviews']) < 100: break
+
+    return reviews
 
 
 def get_json_response(app_id: int, params: dict) -> requests.models.Response.json:
