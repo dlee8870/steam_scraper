@@ -7,7 +7,7 @@ Copyright and Usage Information
 This file is Copyright (c) 2023 Chris Oh, Ahmed Hassini, Andy Zhang, Daniel Lee
 """
 from scrape_app_ids import scrape_app_ids
-from games_network import Game, create_recommendation_network
+from games_network import create_recommendation_network
 from scrape_game_data import get_game_data
 
 # Note to self: Need to split up program into the following files according to assignment page:
@@ -31,10 +31,7 @@ if __name__ == '__main__':
     user_games = {}
 
     for app_id in app_ids:
-        game_data = get_game_data(app_id)
-        game = Game(game_data['name'], game_data['genre'], game_data['price'], game_data['has_online_component'],
-                    game_data['is_multiplayer'], game_data['rating'], game_data['release_date'])
-
+        game = get_game_data(app_id)
         user_games[game] = app_id
 
     # 3. Pass user_games into create_recommendation_network()
