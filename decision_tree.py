@@ -19,7 +19,6 @@ from tkinter import *
 import random
 from games_network import *
 
-
 # This is a list of tuples where the first element is the question and the second element is the user's answer
 QUESTIONS_TO_ANSWERS = []
 
@@ -678,6 +677,7 @@ def destroy_window(window: Tk) -> None:
     """Destroys the frame"""
 
     window.destroy()
+
 
 def _display_stats_for_question(question: str, positive_per: float,
                                 negative_per: float, get_results: bool) -> list[[tuple[Game, int]]]:

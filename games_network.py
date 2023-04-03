@@ -359,6 +359,7 @@ def get_game_data(app_id: int) -> Optional[Game]:
 
     return Game(name, genres, price, has_online_component, is_multiplayer, rating, int(release_year))
 
+
 def scrape_app_ids_all(profile_id: int) -> set:
     """Returns a set of the user's n most played games (in minutes).
     Return an empty list if the user has hidden game details.
