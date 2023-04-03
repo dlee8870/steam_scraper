@@ -221,11 +221,17 @@ def create_recommendation_network(user_games: dict[Game, int],
         app_id = user_games[game]
 
         recommendations = recommendation_network_helper(app_id)
+        # Get the total number of recommended games, including duplicates
         total_weight = sum(recommendations[app_id] for app_id in recommendations)
 
         for recommended_app_id in recommendations:
+            # Convert the game app_id to a Game object
             recommended_game = get_game_data(recommended_app_id)
+            # Calculate the game weight by taking the ratio of this game's number of recommendations to the total
+            # number of recommendations
             game_weight = recommendations[recommended_app_id] / total_weight
+
+            # Add the recommended game to the network, with a directed edge from game to recommended_game
             network.add_recommendation(game, recommended_game, game_weight)
             if recommended_game not in visited_games:
                 games_queue.put_nowait(recommended_game)
