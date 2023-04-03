@@ -8,7 +8,7 @@ This file is Copyright (c) 2023 Chris Oh, Ahmed Hassini, Andy Zhang, Daniel Lee
 """
 
 from input_data import run_tkinter
-from scrape_app_ids import scrape_app_ids, scrape_app_ids_all
+from scrape_app_ids import scrape_app_ids
 from decision_tree import *
 
 # Note to self: Need to split up program into the following files according to assignment page:

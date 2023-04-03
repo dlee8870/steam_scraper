@@ -10,7 +10,6 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 """
 
 import requests
-from games_network import get_game_data, Game
 
 
 def scrape_app_ids(profile_id: int, n: int) -> list[int]:
@@ -44,36 +43,6 @@ def scrape_app_ids(profile_id: int, n: int) -> list[int]:
         return [game['appid'] for game in games_by_playtime]
     else:
         return [games_by_playtime[i]['appid'] for i in range(n)]
-
-
-def scrape_app_ids_all(profile_id: int) -> set[Game]:
-    """Returns a set of the user's n most played games (in minutes).
-    Return an empty list if the user has hidden game details.
-    If the user has less than n games, return all the games they have.
-
-    Preconditions:
-        - len(profile_id) == 17
-        - n > 0
-
-    >>> app_ids1 = scrape_app_ids('star_19642') # Notice he number next to "Games" on the Steam profile is not accurate
-    len(app_ids1) == 42
-    >>> app_ids2 = scrape_app_ids(76561199000093113)
-    len(app_ids2) == 42
-    """
-    params = {
-        'key': '4957E3F30616447A483A7DBA9F26172E',
-        'steamid': str(profile_id),
-        'format': 'json'
-    }
-    json_response = get_json_response(params)
-
-    if not json_response:
-        return []
-
-    games = json_response['games']
-    app_ids = [game['appid'] for game in games]
-
-    return {get_game_data(appid) for appid in app_ids}
 
 
 def get_json_response(params: dict) -> requests.models.Response.json:

@@ -16,7 +16,7 @@ from typing import Optional
 from bs4 import BeautifulSoup
 import requests
 from scrape_profile_ids import scrape_profile_ids
-from scrape_app_ids import scrape_app_ids
+from scrape_app_ids import scrape_app_ids, get_json_response
 
 
 class Game:
@@ -358,6 +358,35 @@ def get_game_data(app_id: int) -> Optional[Game]:
         release_year = ""
 
     return Game(name, genres, price, has_online_component, is_multiplayer, rating, int(release_year))
+
+def scrape_app_ids_all(profile_id: int) -> set:
+    """Returns a set of the user's n most played games (in minutes).
+    Return an empty list if the user has hidden game details.
+    If the user has less than n games, return all the games they have.
+
+    Preconditions:
+        - len(profile_id) == 17
+        - n > 0
+
+    >>> app_ids1 = scrape_app_ids('star_19642') # Notice he number next to "Games" on the Steam profile is not accurate
+    len(app_ids1) == 42
+    >>> app_ids2 = scrape_app_ids(76561199000093113)
+    len(app_ids2) == 42
+    """
+    params = {
+        'key': '4957E3F30616447A483A7DBA9F26172E',
+        'steamid': str(profile_id),
+        'format': 'json'
+    }
+    json_response = get_json_response(params)
+
+    if not json_response:
+        return []
+
+    games = json_response['games']
+    app_ids = [game['appid'] for game in games]
+
+    return {get_game_data(appid) for appid in app_ids}
 
 
 if __name__ == '__main__':
