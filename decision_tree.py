@@ -11,8 +11,7 @@ This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
 """
 
 from __future__ import annotations
-
-import random
+import math
 import time
 from tkinter import *
 from games_network import *
@@ -104,7 +103,7 @@ class DecisionTree:
 
         return num_positive_games, num_negative_games
 
-    def filter_by_price(self) -> None:
+    def filter_by_price(self) -> tuple[int, int]:
         """Filters the games to the true_branch if it matches the user's price preference,
         otherwise moves it to the false_branch
 
@@ -133,7 +132,7 @@ class DecisionTree:
 
         return num_positive_games, num_negative_games
 
-    def filter_by_date(self) -> None:
+    def filter_by_date(self) -> tuple[int, int]:
         """Filters the games to the true_branch if it matches the user's date preference,
         otherwise moves it to the false_branch
 
@@ -163,7 +162,7 @@ class DecisionTree:
 
         return num_positive_games, num_negative_games
 
-    def filter_by_online(self) -> None:
+    def filter_by_online(self) -> tuple[int, int]:
         """Filters the games to the true_branch if it matches the user's online preference,
         otherwise moves it to the false_branch
 
@@ -191,7 +190,7 @@ class DecisionTree:
 
         return num_positive_games, num_negative_games
 
-    def filter_by_multiplayer(self) -> None:
+    def filter_by_multiplayer(self) -> tuple[int, int]:
         """Filters the games to the true_branch if it matches the user's multiplayer preference,
         otherwise moves it to the false_branch
 
@@ -296,7 +295,7 @@ class _Questions:
             self._rank_questions()
 
     def _add_genre(self, genre_entry: Entry, users_genres: set[str], suggestion_str: StringVar, frame: Frame,
-                   genres_left: IntVar, success_message: StringVar) -> None:
+                   genres_left: StringVar, success_message: StringVar) -> None:
         """Tries to add genre from entry if the genre does not exist attempts to suggest a genre based on input
 
         Updates the genres_counter variable and mutates users_genres
@@ -357,7 +356,7 @@ class _Questions:
         label_question.pack(side=TOP)
 
         # Genre counter
-        genres_left = IntVar()
+        genres_left = StringVar()
         label_genres = Label(frame, textvariable=genres_left, relief=SUNKEN)
         label_genres.config(font=('Helvetica bold', 20))
         genres_left.set(f"Genres left: {self.genres_counter}")
@@ -660,6 +659,10 @@ def displaying_questions() -> None:
 
     questions.ask_questions()
 
+def destroy_frame(frame: Frame) -> None:
+    """Destroys the frame"""
+
+    frame.destroy()
 
 def _display_stats_for_question(frame: Frame, question: str,
                                 positive_per: float, negative_per: float, get_results: bool) -> None:
@@ -694,7 +697,7 @@ def _display_stats_for_question(frame: Frame, question: str,
     else:
         button_text = "Continue"
 
-    continue_button = Button(frame, text=button_text, command=frame.destroy())
+    continue_button = Button(frame, text=button_text, command=lambda: destroy_frame(frame))
     continue_button.pack(side=BOTTOM, pady=(0, 100))
 
     frame.mainloop()
@@ -749,7 +752,7 @@ def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -
             num_positive_games_per_q, num_negative_game_per_q = 0, 0
             display_counter += 1
 
-        # Move games comapring their attributes to the answer given by the user
+        # Filter games comapring their attributes to the answer given by the user
         if question == "Genre":
             results = subtree.filter_by_genre()
             num_positive_games_per_q += results[0]
@@ -813,7 +816,7 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
     top_three = [starting_3.pop(), starting_3.pop(), starting_3.pop()]
 
     for order in range(0, len(order_of_games)):
-        for game in order:
+        for game in order_of_games[order]:
             _compare_top_three(top_three, game, order + 1)
 
     return top_three
@@ -850,7 +853,7 @@ def _compare_games(game1: tuple[Game, int], game2: tuple[Game, int]) -> bool:
     game1_score = game1[0].likeability + (game1[1] / 64) * 5
     game2_score = game2[0].likeability + (game2[1] / 64) * 5
 
-    if game1_score > game2:
+    if game1_score > game2_score:
         return True
     elif game1_score == game2_score and game1[1] > game2[1]:
         return True
