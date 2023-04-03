@@ -222,7 +222,8 @@ def create_recommendation_network(user_games: dict[Game, int],
 
         recommendations = recommendation_network_helper(app_id)
 
-        for recommended_game in recommendations:
+        for recommended_app_id in recommendations:
+            recommended_game = get_game_data(recommended_app_id)
             network.add_recommendation(game, recommended_game)
             if recommended_game not in visited_games:
                 games_queue.put_nowait(recommended_game)
@@ -245,11 +246,10 @@ def recommendation_network_helper(app_id: int) -> dict:
         game_app_ids = scrape_app_ids(user_id, 5)
 
         for game_app_id in game_app_ids:
-            game = get_game_data(game_app_id)
-            if (app_id, game) in recommendations:
-                recommendations[(app_id, game)] += 1
+            if game_app_id in recommendations:
+                recommendations[game_app_id] += 1
             else:
-                recommendations[(app_id, game)] = 1
+                recommendations[game_app_id] = 1
 
     return recommendations
 
