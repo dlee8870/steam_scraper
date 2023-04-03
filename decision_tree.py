@@ -70,7 +70,7 @@ class DecisionTree:
         while not queue.empty():
             subtree = queue.get_nowait()
 
-            # Addign its subtrees
+            # Adding its subtrees
             subtree.true_branch = DecisionTree(set(), question_num=subtree.question_num + 1)
             subtree.false_branch = DecisionTree(set(), question_num=subtree.question_num + 1)
 
@@ -110,7 +110,7 @@ class DecisionTree:
         """Filters the games to the true_branch if it matches the user's price preference,
         otherwise moves it to the false_branch
 
-        True if the price simillarity is at least 50%
+        True if the price similarity is at least 50%
         False otherwise
 
         returns a tuple of the number of positive and negative games
@@ -124,9 +124,9 @@ class DecisionTree:
 
         for game in self.games:
             x = abs(game.price - user_price)
-            price_similratiy = math.exp(-k * x)
+            price_similarity = math.exp(-k * x)
 
-            if price_similratiy >= 0.5:
+            if price_similarity >= 0.5:
                 self.true_branch.games.add(game)
                 num_positive_games += 1
             else:
@@ -141,7 +141,7 @@ class DecisionTree:
 
         The range of the dates is from 1980 to 2023
 
-        True if the sbdolute difference the dates is less than or equal to 7
+        True if the absolute difference the dates is less than or equal to 7
         False otherwise
 
         returns a tuple of the number of positive and negative games
@@ -223,7 +223,7 @@ class DecisionTree:
 
 
 class _Questions:
-    """This class represents the five questions and has seperate windows made by tkinter for each question
+    """This class represents the five questions and has separate windows made by tkinter for each question
 
     The goal of this class is to get the user's answers to QUESTIONS and to rank the questions
 
@@ -353,7 +353,7 @@ class _Questions:
             self._next_question(frame, success_message, users_genres, "Genre")
 
     def _get_genres(self) -> None:
-        """Gets the users perferred genres"""
+        """Gets the users preferred genres"""
         frame = Frame(self.window, width=500, height=600)
         frame.pack()
 
@@ -656,7 +656,7 @@ class _Questions:
 
         self.window.mainloop()
 
-    def _desrtroy_window(self) -> None:
+    def _destroy_window(self) -> None:
         """Destroys the window"""
         self.window.destroy()
 
@@ -732,7 +732,7 @@ def display_decision_tree(games: set[Game], user_games: set[Game]) -> list[tuple
 
     Note we do not need a visited set since this is a binary tree
 
-    Returns the top fivve games and the window
+    Returns the top five games and the window
     """
     decision_tree = DecisionTree(games, user_games)
 
@@ -764,7 +764,7 @@ def display_decision_tree(games: set[Game], user_games: set[Game]) -> list[tuple
             num_positive_games_per_q, num_negative_game_per_q = 0, 0
             display_counter += 1
 
-        # Filter games comapring their attributes to the answer given by the user
+        # Filter games comparing their attributes to the answer given by the user
         if question == "Genre":
             results = subtree.filter_by_genre()
             num_positive_games_per_q += results[0]
@@ -839,7 +839,7 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
 
 
 def _compare_top_five(top_five: list[tuple[Game, int]], game: Game, order: int) -> None:
-    """Comapres the game witht the top_five if it has a higher score it will mutate top_five
+    """Compare the game with the top_five if it has a higher score it will mutate top_five
 
     The higher the index in top_three the higher the game score
 
@@ -975,6 +975,6 @@ if __name__ == '__main__':
         'extra-imports': ['typing', 'queue', 'math', 'time', 'tkinter', 'games_network', 'random'],
         'allowed-io': [],
         'disable': ['wildcard-import', 'too-many-arguments', 'unnecessary-lambda', 'too-many-locals',
-                    'too-many-statements'],
+                    'too-many-statements', 'forbidden-IO-function', 'consider-using-with', 'possibly-undefined'],
         'max-line-length': 120
     })

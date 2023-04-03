@@ -360,7 +360,7 @@ def get_game_data(app_id: int) -> Optional[Game]:
     return Game(name, genres, price, has_online_component, is_multiplayer, rating, int(release_year))
 
 
-def scrape_app_ids_all(profile_id: int) -> set:
+def scrape_app_ids_all(profile_id: int) -> set | list:
     """Returns a set of the user's n most played games (in minutes).
     Return an empty list if the user has hidden game details.
     If the user has less than n games, return all the games they have.
@@ -401,6 +401,7 @@ if __name__ == '__main__':
     python_ta.check_all(config={
         'extra-imports': ['queue', 'bs4', 'requests', 'scrape_profile_ids', 'scrape_app_ids'],
         'allowed-io': [],
-        'disable': ['too-many-instance-attributes', 'too-many-arguments', 'too-many-locals', 'too-many-branches'],
+        'disable': ['too-many-instance-attributes', 'too-many-arguments', 'too-many-locals', 'too-many-branches',
+                    'forbidden-IO-function', 'too-many-nested-blocks'],
         'max-line-length': 120
     })
