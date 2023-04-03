@@ -721,6 +721,7 @@ def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -
 
     Returns the top fivve games and the window
     """
+    print("Done")
     decision_tree = DecisionTree(games, user_games)
     window.title("Finding Games You Will Like")
     window.geometry("500x600")
