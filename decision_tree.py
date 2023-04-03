@@ -263,15 +263,20 @@ class _Questions:
 
         self._get_genres()
 
-    def _clear_window(self, frame: Frame, widgets: set[Any] | None) -> None:
+    def _clear_window(self, frame: Frame, widgets: set[Any] | None, destroy_window: bool = False) -> None:
         """Clears the frame of the window
         If there are extra widgets outside the frame it will erase them as well
+
+        Destroys window after last question
         """
         frame.destroy()
 
         if widgets is not None:
             for widget in widgets:
                 widget.destroy()
+
+        if destroy_window:
+            self.window.destroy()
 
     def _next_question(self, frame: Frame, success_message: StringVar, user_answer: Any, question_name: str) -> None:
         """Transitions to the next question window"""
@@ -619,7 +624,7 @@ class _Questions:
                                                                                   question_rank_4, 2, False))
         down_button_3.grid(row=3, column=2, pady=10)
 
-        # Rank 3
+        # Rank 4
         question_rank_4 = StringVar()
         label_rank_4 = Label(frame, textvariable=question_rank_4, relief=FLAT)
         label_rank_4.config(font=('Helvetica bold', 18))
@@ -634,7 +639,7 @@ class _Questions:
                                                                                   question_rank_5, 3, False))
         down_button_4.grid(row=4, column=2, pady=10)
 
-        # Rank 3
+        # Rank 5
         question_rank_5 = StringVar()
         label_rank_5 = Label(frame, textvariable=question_rank_5, relief=FLAT)
         label_rank_5.config(font=('Helvetica bold', 18))
@@ -646,7 +651,8 @@ class _Questions:
         up_button_5.grid(row=5, column=1, pady=10)
 
         # Ends the questionnaire
-        next_button = Button(self.window, text="Get Recommendations", command=self._desrtroy_window())
+        next_button = Button(self.window, text="Get Recommendations", command=lambda: self._clear_window(
+            frame, {label_question, next_button, True}))
         next_button.pack(side=BOTTOM, pady=(0, 100))
 
         self.window.mainloop()
@@ -656,11 +662,11 @@ class _Questions:
         self.window.destroy()
 
 
-def displaying_questions() -> Tk:
+def displaying_questions() -> None:
     """Displays the questions that will be used to filter the decision tree,
     asks user to adjust answers and to rank the priority of the questions
 
-    updates the global variable QUESTIONS_TO_ANSWERS
+    updates the variable QUESTIONS_TO_ANSWERS
     """
 
     questions = _Questions()
@@ -672,7 +678,6 @@ def destroy_frame(frame: Frame) -> None:
     """Destroys the frame"""
 
     frame.destroy()
-
 
 def _display_stats_for_question(frame: Frame, question: str, positive_per: float,
                                 negative_per: float, get_results: bool) -> list[[tuple[Game, int]]]:
