@@ -11,9 +11,9 @@ This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
 """
 
 from __future__ import annotations
+from queue import Queue
 from bs4 import BeautifulSoup
 import requests
-from queue import Queue
 from scrape_profile_ids import scrape_profile_ids
 from scrape_app_ids import scrape_app_ids
 
@@ -23,17 +23,24 @@ class Game:
 
     Instance Attributes:
     - name: Name of the game
-    - genres: Genre of the game
+    - genres: Genres of the game
     - price: Price of the game
     - online: Whether there is an online component to the game
     - multiplayer: Whether there is a multiplayer option
     - rating: Rating for this game
     - tributes: A list of games that have a directed edge pointing to this game
-    - release_date: Release date of the game
+    - release_date: Release year of the game
     - likeability: A score representing the likeability of this game
     - recommended_games: Each key represents a recommended game from this game and an associated value.
                             This value, also known as the weight of the connection/edge, represents the percentage
                             of reviewers who play this game that recommended the other game.
+
+    Representation Invariants:
+    - self.name != ''
+    - self.price >= 0
+    - self.rating >= 0
+    - self.release_date >= 0
+    - self.likeability >= 0
     """
     name: str
     genres: set[str]
@@ -45,7 +52,6 @@ class Game:
     release_date: int
     likeability: float
     recommended_games: dict[Game, float]
-    # PythonTA says max number of attributes is 8
 
     def __init__(self, name: str, genres: set[str], price: float, online: bool,
                  multiplayer: bool, rating: float, release_date: int) -> None:
@@ -63,6 +69,9 @@ class Game:
 
     def update_game_likeability(self, max_tributes: int) -> None:
         """Updates game instance attribute likeability.
+
+        Preconditions:
+        - max_tributes >= 0
 
         likeability is scored based on:
             - tributes
@@ -84,6 +93,10 @@ class Game:
 class RecommendedGamesNetwork:
     """A directed graph where each vertex represents a game object and each directed edge represents a
         recommendation.
+
+    Representation Invariants:
+    - self.num_games >= 0
+    - self.max_tributes >= 0
     """
     # Public Instance Attributes
     #   - num_games: The number of games in the network.
@@ -222,7 +235,7 @@ def create_recommendation_network(id_to_game: dict[int, Game],
 
         recommendations = recommendation_network_helper(app_id)
         # Get the total number of recommended games, including duplicates
-        total_weight = sum(recommendations[app_id] for app_id in recommendations)
+        total_weight = sum(recommendations[app] for app in recommendations)
 
         for recommended_app_id in recommendations:
             # Convert the game app_id to a Game object
@@ -240,6 +253,7 @@ def create_recommendation_network(id_to_game: dict[int, Game],
                 ids_queue.put_nowait(recommended_game)
 
     return network
+
 
 def recommendation_network_helper(app_id: int) -> dict:
     """Obtains a list of recommendations whose keys are the recommended game and the
@@ -360,7 +374,8 @@ if __name__ == '__main__':
     doctest.testmod()
 
     python_ta.check_all(config={
-        'extra-imports': ['queue', 'math'],  # the names (strs) of imported modules
-        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'extra-imports': ['queue', 'bs4', 'requests', 'scrape_profile_ids', 'scrape_app_ids'],
+        'allowed-io': [],
+        'disable': ['too-many-instance-attributes', 'too-many-arguments', 'too-many-locals', 'too-many-branches'],
         'max-line-length': 120
     })
