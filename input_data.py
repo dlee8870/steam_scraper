@@ -9,8 +9,8 @@ Copyright and Usage Information
 ===============================
 This file is Copyright (c) 2023 Daniel Lee, Andy Zhang, Chris Oh, Ahmed Hassini
 """
-import requests
 from __future__ import annotations
+import requests
 from tkinter import *
 from tkinter import messagebox
 

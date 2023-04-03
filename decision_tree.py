@@ -902,7 +902,6 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game1 = Label(frame1, textvariable=game1_stats, relief=FLAT)
     label_game1.config(font=('Helvetica bold', 12))
     game1_stats.set(f"Game #1: {game1.name}\n"
-                    f"Genres: {game1.genres}\n"
                     f"Price: {game1.price}\n"
                     f"Release Year: {game1.release_date}\n"
                     f"Online: {game1.online}\n"
@@ -918,7 +917,6 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game2 = Label(frame1, textvariable=game2_stats, relief=FLAT)
     label_game2.config(font=('Helvetica bold', 12))
     game2_stats.set(f"Game #2: {game2.name}\n"
-                    f"Genres: {game2.genres}\n"
                     f"Price: {game2.price}\n"
                     f"Release Year: {game2.release_date}\n"
                     f"Online: {game2.online}\n"
@@ -934,7 +932,6 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game3 = Label(frame1, textvariable=game3_stats, relief=FLAT)
     label_game3.config(font=('Helvetica bold', 12))
     game3_stats.set(f"Game #3: {game3.name}\n"
-                    f"Genres: {game3.genres}\n"
                     f"Price: {game3.price}\n"
                     f"Release Year: {game3.release_date}\n"
                     f"Online: {game3.online}\n"
@@ -950,7 +947,6 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game4 = Label(frame1, textvariable=game4_stats, relief=FLAT)
     label_game4.config(font=('Helvetica bold', 12))
     game4_stats.set(f"Game #4: {game4.name}\n"
-                    f"Genres: {game4.genres}\n"
                     f"Price: {game4.price}\n"
                     f"Release Year: {game4.release_date}\n"
                     f"Online: {game4.online}\n"
@@ -966,7 +962,6 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     label_game5 = Label(frame1, textvariable=game5_stats, relief=FLAT)
     label_game5.config(font=('Helvetica bold', 12))
     game5_stats.set(f"Game #5: {game5.name}\n"
-                    f"Genres: {game5.genres}\n"
                     f"Price: {game5.price}\n"
                     f"Release Year: {game5.release_date}\n"
                     f"Online: {game5.online}\n"

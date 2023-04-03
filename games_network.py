@@ -12,6 +12,7 @@ This file is Copyright (c) 2023 Ahmed Hassini, Chris Oh, Andy Zhang, Daniel Lee
 
 from __future__ import annotations
 from queue import Queue
+from typing import Optional
 from bs4 import BeautifulSoup
 import requests
 from scrape_profile_ids import scrape_profile_ids
@@ -246,8 +247,10 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
                 for app_id in app_ids:
                     if app_id not in app_ids_to_appearances:
                         q.put_nowait(app_id)
-                        app_id_to_game[app_id] = get_game_data(app_id)
-                        app_ids_to_appearances[app_id_to_game[app_id]] = 1
+                        get_game = get_game_data(app_id)
+                        if get_game is not None:
+                            app_id_to_game[app_id] = get_game_data(app_id)
+                            app_ids_to_appearances[app_id_to_game[app_id]] = 1
                     else:
                         app_ids_to_appearances[app_id_to_game[app_id]] += 1
 
@@ -259,7 +262,7 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
     return network
 
 
-def get_game_data(app_id: int) -> Game:
+def get_game_data(app_id: int) -> Optional[Game]:
     """Scrape game data from the Steam store given an app id.
 
     Preconditions:
@@ -282,7 +285,10 @@ def get_game_data(app_id: int) -> Game:
     soup = BeautifulSoup(response.content, "html.parser")
 
     # Get game name
-    name = soup.select_one("div.apphub_AppName").text.strip()
+    try:
+        name = soup.select_one("div.apphub_AppName").text.strip()
+    except AttributeError:
+        return None
 
     # Get game description
     description = soup.select_one('div', {'class': 'game_description_snippet'}).text.strip()
