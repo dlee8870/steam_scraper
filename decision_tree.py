@@ -98,9 +98,10 @@ class DecisionTree:
 
         for game in self.games:
 
-            if user_genres == set() or any(user_genre in game.genres for user_genre in user_genres):
+            if user_genres == set() or any(game_genre.lower() in user_genres for game_genre in game.genres):
                 self.true_branch.games.add(game)
                 num_positive_games += 1
+                print("yes")
             else:
                 self.false_branch.games.add(game)
                 num_negative_games += 1
@@ -826,7 +827,8 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
         starting_5 = random.choice(order_of_games).copy()
 
     # The pop method for set removes and return random elements this is why I made a copy, so it does not mutate
-    top_five = [starting_5.pop() for _ in range(0, 5)]
+    # TODO
+    top_five = [(starting_5.pop(), -64) for _ in range(0, 5)]
 
     for order in range(0, len(order_of_games)):
         for game in order_of_games[order]:
@@ -889,7 +891,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     header = StringVar()
     label_header = Label(window, textvariable=header, relief=FLAT)
     label_header.config(font=('Helvetica bold', 26))
-    header.set(f"Your top 5 games")
+    header.set("Your top 5 games")
     label_header.pack(side=TOP)
 
     frame1 = Frame(window)
@@ -898,81 +900,81 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     # Game 1
     game1, preference_score_1 = top_games[4][0], top_games[4][1] / 64
     game1_stats = StringVar()
-    label_game1 = Label(frame1, textvariable=header, relief=FLAT)
-    label_game1.config(font=('Helvetica bold', 18))
-    game1_stats.set(f"Game #1: {game1.name}"
-                    f"Genres: {game1.genres}"
-                    f"Price: {game1.price}"
-                    f"Release Year: {game1.release_date}"
-                    f"Online: {game1.online}"
-                    f"Multiplayer: {game1.multiplayer}"
-                    f"General Likeability Score: {round((game1.likeability / 3) * 100, 1)}"
-                    f"User Likeability Score: {round(preference_score_1 * 100, 1)}"
-                    f"Total Score: {round(((game1.likeability + preference_score_1 * 5) / 8)) * 100, 1}")
+    label_game1 = Label(frame1, textvariable=game1_stats, relief=FLAT)
+    label_game1.config(font=('Helvetica bold', 12))
+    game1_stats.set(f"Game #1: {game1.name}\n"
+                    f"Genres: {game1.genres}\n"
+                    f"Price: {game1.price}\n"
+                    f"Release Year: {game1.release_date}\n"
+                    f"Online: {game1.online}\n"
+                    f"Multiplayer: {game1.multiplayer}\n"
+                    f"General Likeability Score: {round((game1.likeability / 3) * 100, 1)}\n"
+                    f"User Likeability Score: {round(preference_score_1 * 100, 1)}\n"
+                    f"Total Score: {round(((game1.likeability + preference_score_1 * 5) / 8)) * 100, 1}\n")
     label_game1.grid(row=0, column=0)
 
     # Game 2
     game2, preference_score_2 = top_games[3][0], top_games[3][1] / 64
     game2_stats = StringVar()
-    label_game2 = Label(frame1, textvariable=header, relief=FLAT)
-    label_game2.config(font=('Helvetica bold', 18))
-    game2_stats.set(f"Game #2: {game2.name}"
-                    f"Genres: {game2.genres}"
-                    f"Price: {game2.price}"
-                    f"Release Year: {game2.release_date}"
-                    f"Online: {game2.online}"
-                    f"Multiplayer: {game2.multiplayer}"
-                    f"General Likeability Score: {round((game2.likeability / 3) * 100, 1)}"
-                    f"User Likeability Score: {round(preference_score_2 * 100, 1)}"
-                    f"Total Score: {round(((game2.likeability + preference_score_2 * 5) / 8)) * 100, 1}")
+    label_game2 = Label(frame1, textvariable=game2_stats, relief=FLAT)
+    label_game2.config(font=('Helvetica bold', 12))
+    game2_stats.set(f"Game #2: {game2.name}\n"
+                    f"Genres: {game2.genres}\n"
+                    f"Price: {game2.price}\n"
+                    f"Release Year: {game2.release_date}\n"
+                    f"Online: {game2.online}\n"
+                    f"Multiplayer: {game2.multiplayer}\n"
+                    f"General Likeability Score: {round((game2.likeability / 3) * 100, 1)}\n"
+                    f"User Likeability Score: {round(preference_score_2 * 100, 1)}\n"
+                    f"Total Score: {round(((game2.likeability + preference_score_2 * 5) / 8)) * 100, 1}\n")
     label_game2.grid(row=0, column=1)
 
     # Game 3
     game3, preference_score_3 = top_games[2][0], top_games[2][1] / 64
     game3_stats = StringVar()
-    label_game3 = Label(frame1, textvariable=header, relief=FLAT)
-    label_game3.config(font=('Helvetica bold', 18))
-    game3_stats.set(f"Game #3: {game3.name}"
-                    f"Genres: {game3.genres}"
-                    f"Price: {game3.price}"
-                    f"Release Year: {game3.release_date}"
-                    f"Online: {game3.online}"
-                    f"Multiplayer: {game3.multiplayer}"
-                    f"General Likeability Score: {round((game3.likeability / 3) * 100, 1)}"
-                    f"User Likeability Score: {round(preference_score_3 * 100, 1)}"
-                    f"Total Score: {round(((game3.likeability + preference_score_3 * 5) / 8)) * 100, 1}")
+    label_game3 = Label(frame1, textvariable=game3_stats, relief=FLAT)
+    label_game3.config(font=('Helvetica bold', 12))
+    game3_stats.set(f"Game #3: {game3.name}\n"
+                    f"Genres: {game3.genres}\n"
+                    f"Price: {game3.price}\n"
+                    f"Release Year: {game3.release_date}\n"
+                    f"Online: {game3.online}\n"
+                    f"Multiplayer: {game3.multiplayer}\n"
+                    f"General Likeability Score: {round((game3.likeability / 3) * 100, 1)}\n"
+                    f"User Likeability Score: {round(preference_score_3 * 100, 1)}\n"
+                    f"Total Score: {round(((game3.likeability + preference_score_3 * 5) / 8)) * 100, 1}\n")
     label_game3.grid(row=0, column=1)
 
     # Game 4
     game4, preference_score_4 = top_games[1][0], top_games[1][1] / 64
     game4_stats = StringVar()
-    label_game4 = Label(frame1, textvariable=header, relief=FLAT)
-    label_game4.config(font=('Helvetica bold', 18))
-    game4_stats.set(f"Game #4: {game4.name}"
-                    f"Genres: {game4.genres}"
-                    f"Price: {game4.price}"
-                    f"Release Year: {game4.release_date}"
-                    f"Online: {game4.online}"
-                    f"Multiplayer: {game4.multiplayer}"
-                    f"General Likeability Score: {round((game4.likeability / 3) * 100, 1)}"
-                    f"User Likeability Score: {round(preference_score_4 * 100, 1)}"
-                    f"Total Score: {round(((game4.likeability + preference_score_4 * 5) / 8)) * 100, 1}")
+    label_game4 = Label(frame1, textvariable=game4_stats, relief=FLAT)
+    label_game4.config(font=('Helvetica bold', 12))
+    game4_stats.set(f"Game #4: {game4.name}\n"
+                    f"Genres: {game4.genres}\n"
+                    f"Price: {game4.price}\n"
+                    f"Release Year: {game4.release_date}\n"
+                    f"Online: {game4.online}\n"
+                    f"Multiplayer: {game4.multiplayer}\n"
+                    f"General Likeability Score: {round((game4.likeability / 3) * 100, 1)}\n"
+                    f"User Likeability Score: {round(preference_score_4 * 100, 1)}\n"
+                    f"Total Score: {round(((game4.likeability + preference_score_4 * 5) / 8)) * 100, 1}\n")
     label_game4.grid(row=1, column=0)
 
     # Game 5
     game5, preference_score_5 = top_games[0][0], top_games[0][1] / 64
     game5_stats = StringVar()
-    label_game5 = Label(frame1, textvariable=header, relief=FLAT)
-    label_game5.config(font=('Helvetica bold', 18))
-    game5_stats.set(f"Game #5: {game5.name}"
-                    f"Genres: {game5.genres}"
-                    f"Price: {game5.price}"
-                    f"Release Year: {game5.release_date}"
-                    f"Online: {game5.online}"
-                    f"Multiplayer: {game5.multiplayer}"
-                    f"General Likeability Score: {round((game5.likeability / 3) * 100, 1)}"
-                    f"User Likeability Score: {round(preference_score_5 * 100, 1)}"
-                    f"Total Score: {round(((game5.likeability + preference_score_5 * 5) / 8)) * 100, 1}")
+    label_game5 = Label(frame1, textvariable=game5_stats, relief=FLAT)
+    label_game5.config(font=('Helvetica bold', 12))
+    game5_stats.set(f"Game #5: {game5.name}\n"
+                    f"Genres: {game5.genres}\n"
+                    f"Price: {game5.price}\n"
+                    f"Release Year: {game5.release_date}\n"
+                    f"Online: {game5.online}\n"
+                    f"Multiplayer: {game5.multiplayer}\n"
+                    f"General Likeability Score: {round((game5.likeability / 3) * 100, 1)}\n"
+                    f"User Likeability Score: {round(preference_score_5 * 100, 1)}\n"
+                    f"Total Score: {round(((game5.likeability + preference_score_5 * 5) / 8)) * 100, 1}\n")
     label_game5.grid(row=1, column=1)
 
     window.mainloop()

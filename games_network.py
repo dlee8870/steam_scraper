@@ -216,7 +216,7 @@ class RecommendedGamesNetwork:
 
 
 def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
-                                  num_recommendations: int = 320) -> RecommendedGamesNetwork:
+                                  num_recommendations: int = 120) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
     returning a complete recommended game network
