@@ -12,10 +12,9 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 
 from bs4 import BeautifulSoup
 import requests
-from games_network import Game
 
 
-def get_game_data(app_id: int) -> Game:
+def get_game_data(app_id: int) -> tuple:
     """Scrape game data from the Steam store given an app id.
 
     Preconditions:
@@ -100,7 +99,7 @@ def get_game_data(app_id: int) -> Game:
     else:
         release_year = ""
 
-    return Game(name, genres, price, has_online_component, is_multiplayer, rating, int(release_year))
+    return name, genres, price, has_online_component, is_multiplayer, rating, int(release_year)
 
 
 if __name__ == '__main__':
