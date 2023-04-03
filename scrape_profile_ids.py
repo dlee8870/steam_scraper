@@ -39,8 +39,6 @@ def scrape_profile_ids(app_id: int, n: int) -> list[int]:
         params['num_per_page'] = min(n, 100)  # each response cursor yields at most 100 reviews
         n -= 100
         response = get_json_response(app_id, params)
-        if "cursor" not in response:
-            return []
         params['cursor'] = response['cursor'].encode()
         reviews += response['reviews']
 
