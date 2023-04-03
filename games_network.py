@@ -215,7 +215,7 @@ class RecommendedGamesNetwork:
             game.update_game_likeability(self.max_tributes)
 
 
-def create_recommendation_network(id_to_game: dict[int, Game],
+def create_recommendation_network(app_id_to_game: dict[int, Game],
                                   num_recommendations: int = 20) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
@@ -223,21 +223,21 @@ def create_recommendation_network(id_to_game: dict[int, Game],
     """
     network = RecommendedGamesNetwork()
 
-    #  Creating a new queue of the games to be added
-    #  num_recommendations represents the maximum possible size of the queue (Optional)
-    ids_queue = Queue()
-    visited_ids = set()
+    visited_app_ids = set()
+    q = Queue()
 
-    for idd in id_to_game:
-        ids_queue.put_nowait(idd)
-        network.add_game(id_to_game[idd])
+    for app_id in app_id_to_game:
+        visited_app_ids.add(app_id)  # Adding starting games to visited
+        q.put_nowait(app_id)  # Adding starting games to queue
+        network.add_game(app_id_to_game[app_id])  # Adding starting games to network
 
     #  Keep looping till we added num_recommendations in the network
     #  Exit if the queue is empty (Occurs when not enough reviews on games were found)
-    while not ids_queue.empty() and network.num_games < num_recommendations:
+    while not q.empty() and network.num_games < num_recommendations:
         print(network.num_games)
-        app_id = ids_queue.get_nowait()
-        visited_ids.add(app_id)
+
+        app_id = q.get_nowait()
+        visited_app_ids.add(app_id)
 
         recommendations = recommendation_network_helper(app_id)
         # Get the total number of recommended games, including duplicates
@@ -251,12 +251,12 @@ def create_recommendation_network(id_to_game: dict[int, Game],
             game_weight = recommendations[recommended_app_id] / total_weight
 
             # Add the recommended game to the network, with a directed edge from game to recommended_game
-            network.add_recommendation(id_to_game[app_id], recommended_game, game_weight)
+            network.add_recommendation(visited_app_ids[app_id], recommended_game, game_weight)
 
             # Only add teh game to the queue if its recommendations have not already been checked
-            if recommended_app_id not in visited_ids:
-                id_to_game[recommended_app_id] = recommended_game
-                ids_queue.put_nowait(recommended_game)
+            if recommended_app_id not in visited_app_ids:
+                visited_app_ids[recommended_app_id] = recommended_game
+                q.put_nowait(recommended_game)
 
     return network
 
@@ -377,6 +377,7 @@ if __name__ == '__main__':
     import python_ta.contracts
 
     import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={
