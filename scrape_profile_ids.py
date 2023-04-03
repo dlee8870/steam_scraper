@@ -49,7 +49,7 @@ import requests
 
 def get_reviews(appid, params={'json': 1}):
     url = 'https://store.steampowered.com/appreviews/'
-    response = requests.get(url=url + appid, params=params, headers={'User-Agent': 'Mozilla/5.0'})
+    response = requests.get(url=url + str(appid), params=params, headers={'User-Agent': 'Mozilla/5.0'})
     return response.json()
 
 
@@ -76,7 +76,7 @@ def scrape_profile_ids(app_id, n):
 
         if len(response['reviews']) < 100: break
 
-    return reviews
+    return [int(review['author']['steamid']) for review in reviews]
 
 
 def get_json_response(app_id: int, params: dict) -> requests.models.Response.json:
