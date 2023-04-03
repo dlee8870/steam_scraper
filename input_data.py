@@ -24,6 +24,7 @@ input_pf.place(relx=0.5, rely=0.2, anchor='n')
 r = IntVar()
 r.get()
 
+
 def run_tkinter():
     """Run the Tkinter application"""
 
@@ -47,9 +48,11 @@ def run_tkinter():
     # Run the window
     root.mainloop()
 
+
 def display_info():
     """Give instructions on how to operate menu"""
     messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), and then fill out the box")
+
 
 def store_data():
     """Store the data inputed in the textbox into a variable"""
@@ -60,8 +63,9 @@ def store_data():
         if len(all_int_64_prof) != 17 or all(letter.isnumeric() for letter in all_int_64_prof) is False:
             messagebox.showerror("Error", "Invalid input")
         else:
+            # Change from str to int
+            all_int_64_prof = int(all_int_64_prof)
             # Perhaps call Decision Tree here
-            ...
     # IF the input is a custom profile input
     else:
         custom_prof = input_pf.get()
@@ -77,6 +81,7 @@ if __name__ == '__main__':
     import python_ta.contracts
 
     import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={
