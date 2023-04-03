@@ -247,7 +247,7 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
                 for app_id in app_ids:
                     if app_id not in visited_app_ids:
                         q.put_nowait(app_id)
-                        network.add_game(get_game_data(app_id))
+                        network.add_recommendation()
 
         # Get the total number of recommended games, including duplicates
         total_weight = sum(recommendations[app] for app in recommendations)
