@@ -369,10 +369,8 @@ def scrape_app_ids_all(profile_id: int) -> set | list:
         - len(profile_id) == 17
         - n > 0
 
-    >>> app_ids1 = scrape_app_ids('star_19642') # Notice he number next to "Games" on the Steam profile is not accurate
-    len(app_ids1) == 42
-    >>> app_ids2 = scrape_app_ids(76561199000093113)
-    len(app_ids2) == 42
+    >>> app_ids = scrape_app_ids_all(76561199000093113)
+    len(app_ids) == 42
     """
     params = {
         'key': '4957E3F30616447A483A7DBA9F26172E',
