@@ -264,6 +264,7 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
                                                app_ids_to_appearances[app_id] / total_game_appearances)
 
     network.update_games_likeability()
+    print("Completeness: 100%")
 
     return network
 

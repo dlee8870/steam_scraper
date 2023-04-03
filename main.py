@@ -8,9 +8,7 @@ This file is Copyright (c) 2023 Chris Oh, Ahmed Hassini, Andy Zhang, Daniel Lee
 """
 
 from input_data import run_tkinter
-from tkinter import Tk
-from scrape_app_ids import scrape_app_ids
-from games_network import *
+from scrape_app_ids import scrape_app_ids, scrape_app_ids_all
 from decision_tree import *
 
 # Note to self: Need to split up program into the following files according to assignment page:
@@ -39,7 +37,7 @@ if __name__ == '__main__':
 
     displaying_questions()
 
-    top_games = display_decision_tree(network.get_games(), set(app_id_to_game.values()))
+    top_games = display_decision_tree(network.get_games(), scrape_app_ids_all(profile_id[0]))
 
     displaying_results(top_games)
 

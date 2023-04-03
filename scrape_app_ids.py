@@ -10,6 +10,7 @@ This file is Copyright (c) 2023 Andy Zhang, Daniel Lee, Ahmed Hassini, Chris Oh
 """
 
 import requests
+from games_network import get_game_data, Game
 
 
 def scrape_app_ids(profile_id: int, n: int) -> list[int]:
@@ -45,8 +46,8 @@ def scrape_app_ids(profile_id: int, n: int) -> list[int]:
         return [games_by_playtime[i]['appid'] for i in range(n)]
 
 
-def scrape_app_ids_all(profile_id: int) -> list[int]:
-    """Returns a list of the user's n most played games (in minutes).
+def scrape_app_ids_all(profile_id: int) -> set[Game]:
+    """Returns a set of the user's n most played games (in minutes).
     Return an empty list if the user has hidden game details.
     If the user has less than n games, return all the games they have.
 
@@ -70,7 +71,9 @@ def scrape_app_ids_all(profile_id: int) -> list[int]:
         return []
 
     games = json_response['games']
-    return [game['appid'] for game in games]
+    app_ids = [game['appid'] for game in games]
+
+    return {get_game_data(appid) for appid in app_ids}
 
 
 def get_json_response(params: dict) -> requests.models.Response.json:

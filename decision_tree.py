@@ -907,7 +907,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game1.release_date}\n"
                     f"Online: {game1.online}\n"
                     f"Multiplayer: {game1.multiplayer}\n"
-                    f"Game Score: {round(((game1.likeability + preference_score_1 * 5) / 8) * 100, 1)}\n")
+                    f"Game Score: {round(((game1.likeability / 3 + preference_score_1 * 5) / 6) * 100, 1)}%\n")
     label_game1.grid(row=0, column=0)
 
     # Game 2
@@ -920,7 +920,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game2.release_date}\n"
                     f"Online: {game2.online}\n"
                     f"Multiplayer: {game2.multiplayer}\n"
-                    f"Game Score: {round(((game2.likeability + preference_score_2 * 5) / 8) * 100, 1)}\n")
+                    f"Game Score: {round(((game2.likeability / 3 + preference_score_2 * 5) / 6) * 100, 1)}%\n")
     label_game2.grid(row=0, column=1)
 
     # Game 3
@@ -933,7 +933,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game3.release_date}\n"
                     f"Online: {game3.online}\n"
                     f"Multiplayer: {game3.multiplayer}\n"
-                    f"Game Score: {round(((game3.likeability + preference_score_3 * 5) / 8) * 100, 1)}\n")
+                    f"Game Score: {round(((game3.likeability / 3 + preference_score_3 * 5) / 6) * 100, 1)}%\n")
     label_game3.grid(row=0, column=2)
 
     # Game 4
@@ -946,7 +946,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game4.release_date}\n"
                     f"Online: {game4.online}\n"
                     f"Multiplayer: {game4.multiplayer}\n"
-                    f"Game Score: {round(((game4.likeability + preference_score_4 * 5) / 8) * 100, 1)}\n")
+                    f"Game Score: {round(((game4.likeability / 3 + preference_score_4 * 5) / 6) * 100, 1)}%\n")
     label_game4.grid(row=1, column=0)
 
     # Game 5
@@ -959,7 +959,7 @@ def displaying_results(top_games: list[tuple[Game, int]]) -> None:
                     f"Release Year: {game5.release_date}\n"
                     f"Online: {game5.online}\n"
                     f"Multiplayer: {game5.multiplayer}\n"
-                    f"Game Score: {round(((game5.likeability + preference_score_5 * 5) / 8) * 100, 1)}\n")
+                    f"Game Score: {round(((game5.likeability / 3 + preference_score_5 * 5) / 6) * 100, 1)}%\n")
     label_game5.grid(row=1, column=1)
 
     window.mainloop()
