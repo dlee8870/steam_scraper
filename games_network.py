@@ -251,8 +251,6 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
                         if get_game is None:
                             continue
                         app_id_to_game[app_id] = get_game_data(app_id)
-                        print(app_id_to_game[app_id].online, app_id_to_game[app_id].multiplayer,
-                              app_id_to_game[app_id].likeability)
                         app_ids_to_appearances[app_id] = 1
                     else:
                         app_ids_to_appearances[app_id] += 1
