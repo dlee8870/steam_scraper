@@ -39,12 +39,9 @@ if __name__ == '__main__':
 
     displaying_questions()
 
-    # Creating new window
-    window = Tk()
+    top_games = display_decision_tree(network.get_games(), set(app_id_to_game.values()))
 
-    top_games = display_decision_tree(window, network.get_games(), set(app_id_to_game.values()))
-
-    displaying_results(window, top_games)
+    displaying_results(top_games)
 
     # 1. User is prompted to enter their profile_id using code in input_data.py
     # 2. Their profile_id is passed into scrape_app_ids() in scrape_app_ids.py which returns a set of app_ids

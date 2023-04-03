@@ -263,7 +263,7 @@ class _Questions:
 
         self._get_genres()
 
-    def _clear_window(self, frame: Frame, widgets: set[Any] | None, destroy_window: bool = False) -> None:
+    def _clear_window(self, frame: Frame, widgets: set[Any] | None, destroys_window: bool = False) -> None:
         """Clears the frame of the window
         If there are extra widgets outside the frame it will erase them as well
 
@@ -275,7 +275,7 @@ class _Questions:
             for widget in widgets:
                 widget.destroy()
 
-        if destroy_window:
+        if destroys_window:
             self.window.destroy()
 
     def _next_question(self, frame: Frame, success_message: StringVar, user_answer: Any, question_name: str) -> None:
@@ -652,7 +652,7 @@ class _Questions:
 
         # Ends the questionnaire
         next_button = Button(self.window, text="Get Recommendations", command=lambda: self._clear_window(
-            frame, {label_question, next_button, True}))
+            frame, {label_question, next_button}, True))
         next_button.pack(side=BOTTOM, pady=(0, 100))
 
         self.window.mainloop()
@@ -674,12 +674,12 @@ def displaying_questions() -> None:
     questions.ask_questions()
 
 
-def destroy_frame(frame: Frame) -> None:
+def destroy_window(window: Tk) -> None:
     """Destroys the frame"""
 
-    frame.destroy()
+    window.destroy()
 
-def _display_stats_for_question(frame: Frame, question: str, positive_per: float,
+def _display_stats_for_question(question: str, positive_per: float,
                                 negative_per: float, get_results: bool) -> list[[tuple[Game, int]]]:
     """Displays the stats of the current question on the given frame
 
@@ -687,6 +687,12 @@ def _display_stats_for_question(frame: Frame, question: str, positive_per: float
 
     Returns the top games
     """
+    window = Tk()
+    window.title("Finding Games You Will Like")
+    window.geometry("500x600")
+    window.resizable(False, False)
+    frame = Frame(window)
+    frame.pack()
 
     # Current filter
     curr_question = StringVar()
@@ -698,15 +704,15 @@ def _display_stats_for_question(frame: Frame, question: str, positive_per: float
     # The results
     positive_str = StringVar()
     label_positive_results = Label(frame, textvariable=positive_str, relief=SOLID)
-    label_positive_results.config(font=('Helvetica bold', 18))
-    positive_str.set(f"Percentage of Games That Match your {question} Prefence: {positive_per}")
+    label_positive_results.config(font=('Helvetica bold', 13))
+    positive_str.set(f"Percentage of Games That Match your {question} Preference: {positive_per * 100}%")
     label_positive_results.pack(side=TOP, pady=(75, 10))
 
     negative_str = StringVar()
     label_negative_results = Label(frame, textvariable=negative_str, relief=SOLID)
-    label_negative_results.config(font=('Helvetica bold', 18))
-    negative_str.set(f"Percentage of Games That did Not Match your {question} Prefence: {negative_per}")
-    label_positive_results.pack(side=TOP)
+    label_negative_results.config(font=('Helvetica bold', 13))
+    negative_str.set(f"Percentage of Games That did Not Match your {question} Preference: {negative_per * 100}%")
+    label_negative_results.pack(side=TOP)
 
     # Continue button
     if get_results:
@@ -714,35 +720,20 @@ def _display_stats_for_question(frame: Frame, question: str, positive_per: float
     else:
         button_text = "Continue"
 
-    continue_button = Button(frame, text=button_text, command=lambda: destroy_frame(frame))
+    continue_button = Button(frame, text=button_text, command=lambda: destroy_window(window))
     continue_button.pack(side=BOTTOM, pady=(0, 100))
 
-    frame.mainloop()
+    window.mainloop()
 
 
-def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -> list[tuple[Game, int]]:
+def display_decision_tree(games: set[Game], user_games: set[Game]) -> list[tuple[Game, int]]:
     """Displays a pop-up window with the decision tree
 
     Note we do not need a visited set since this is a binary tree
 
     Returns the top fivve games and the window
     """
-    print("Done")
     decision_tree = DecisionTree(games, user_games)
-    window.title("Finding Games You Will Like")
-    window.geometry("500x600")
-    window.resizable(False, False)
-    frame = Frame(window)
-    frame.pack()
-
-    # Header Label
-    header = StringVar()
-    label_header = Label(window, textvariable=header, relief=FLAT)
-    label_header.config(font=('Helvetica bold', 26))
-    header.set("Filtering Games")
-    label_header.pack(side=TOP)
-
-    window.update()
 
     # Creates the decision tree
     decision_tree.generate_preset_decision_tree()
@@ -767,7 +758,7 @@ def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -
             percentage_of_positives = num_positive_games_per_q / total_games
             percentage_of_negatives = num_negative_game_per_q / total_games
             last_question = QUESTIONS_TO_ANSWERS[display_counter - 1][0]
-            _display_stats_for_question(frame, last_question, percentage_of_positives, percentage_of_negatives, False)
+            _display_stats_for_question(last_question, percentage_of_positives, percentage_of_negatives, False)
 
             num_positive_games_per_q, num_negative_game_per_q = 0, 0
             display_counter += 1
@@ -810,7 +801,7 @@ def display_decision_tree(window: Tk, games: set[Game], user_games: set[Game]) -
     percentage_of_positives = num_positive_games_per_q / total_games
     percentage_of_negatives = num_negative_game_per_q / total_games
     last_question = QUESTIONS_TO_ANSWERS[4][0]
-    _display_stats_for_question(frame, last_question, percentage_of_positives, percentage_of_negatives, True)
+    _display_stats_for_question(last_question, percentage_of_positives, percentage_of_negatives, True)
 
     # Get the results
     top_five = _get_results(order_of_games)
@@ -886,10 +877,10 @@ def _compare_games(game1: tuple[Game, int], game2: tuple[Game, int]) -> bool:
         return False
 
 
-def displaying_results(window: Tk, top_games: list[tuple[Game, int]]) -> None:
+def displaying_results(top_games: list[tuple[Game, int]]) -> None:
     """Displays the results using tkinter with the scores out of 10 and other information.
     """
-
+    window = Tk()
     window.title("Serving Your Games!")
     window.geometry("500x600")
     window.resizable(False, False)
