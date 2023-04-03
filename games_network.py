@@ -221,10 +221,10 @@ def create_recommendation_network(user_games: dict[Game, int],
         app_id = user_games[game]
 
         recommendations = recommendation_network_helper(app_id)
+        total_weight = sum(recommendations[app_id] for app_id in recommendations)
 
         for recommended_app_id in recommendations:
             recommended_game = get_game_data(recommended_app_id)
-            total_weight = sum(recommendations[app_id] for app_id in recommendations)
             game_weight = recommendations[recommended_app_id] / total_weight
             network.add_recommendation(game, recommended_game, game_weight)
             if recommended_game not in visited_games:
