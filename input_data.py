@@ -24,6 +24,7 @@ input_pf.place(relx=0.5, rely=0.2, anchor='n')
 r = IntVar()
 r.get()
 
+
 def run_tkinter():
     """Run the Tkinter application"""
 
@@ -47,9 +48,11 @@ def run_tkinter():
     # Run the window
     root.mainloop()
 
+
 def display_info():
     """Give instructions on how to operate menu"""
     messagebox.showinfo("Tutorial", "First, select your choice of input (64-bit or custom), and then fill out the box")
+
 
 def store_data():
     """Store the data inputed in the textbox into a variable"""
@@ -77,6 +80,7 @@ if __name__ == '__main__':
     import python_ta.contracts
 
     import doctest
+
     doctest.testmod()
 
     python_ta.check_all(config={
