@@ -217,7 +217,7 @@ class RecommendedGamesNetwork:
 
 
 def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
-                                  num_recommendations: int = 120) -> RecommendedGamesNetwork:
+                                  num_recommendations: int = 320) -> RecommendedGamesNetwork:
     """Takes in the user's top games from their profile
     then using the reviews on each game it will add recommended games to the network,
     returning a complete recommended game network
@@ -236,7 +236,6 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
     #  Exit if the queue is empty (Occurs when not enough reviews on games were found)
     app_ids_to_appearances = {}
     while not q.empty() and network.num_games < num_recommendations:
-        print(network.num_games)
         curr_app_id = q.get_nowait()
         profile_ids = scrape_profile_ids(curr_app_id, 5)
 
@@ -250,14 +249,14 @@ def create_recommendation_network(user_app_ids_to_games: dict[int, Game],
                         get_game = get_game_data(app_id)
                         if get_game is not None:
                             app_id_to_game[app_id] = get_game_data(app_id)
-                            app_ids_to_appearances[app_id_to_game[app_id]] = 1
+                            app_ids_to_appearances[app_id] = 1
                     else:
-                        app_ids_to_appearances[app_id_to_game[app_id]] += 1
+                        app_ids_to_appearances[app_id] += 1
 
                     total_game_appearances = sum([app_ids_to_appearances[key] for key in app_ids_to_appearances])
                     network.add_recommendation(app_id_to_game[curr_app_id],
                                                app_id_to_game[app_id],
-                                               app_ids_to_appearances[app_id_to_game[app_id]] / total_game_appearances)
+                                               app_ids_to_appearances[app_id] / total_game_appearances)
 
     return network
 

@@ -705,13 +705,14 @@ def _display_stats_for_question(question: str, positive_per: float,
     positive_str = StringVar()
     label_positive_results = Label(frame, textvariable=positive_str, relief=SOLID)
     label_positive_results.config(font=('Helvetica bold', 13))
-    positive_str.set(f"Percentage of Games That Match your {question} Preference: {positive_per * 100}%")
+    positive_str.set(f"Percentage of Games That Match your {question} Preference: {round(positive_per * 100, 1)}%")
     label_positive_results.pack(side=TOP, pady=(75, 10))
 
     negative_str = StringVar()
     label_negative_results = Label(frame, textvariable=negative_str, relief=SOLID)
     label_negative_results.config(font=('Helvetica bold', 13))
-    negative_str.set(f"Percentage of Games That did Not Match your {question} Preference: {negative_per * 100}%")
+    negative_str.set(f"Percentage of Games That did Not Match your {question} "
+                     f"Preference: {round(negative_per * 100, 1)}%")
     label_negative_results.pack(side=TOP)
 
     # Continue button
@@ -819,15 +820,16 @@ def _get_results(order_of_games: list[set[Game]]) -> list[tuple[Game, int]]:
 
     returns the top five games
     """
-    # Getting the starting 3, note that there will always be atleast 1000 games in teh network
-    # thus there must atleast one order which contains at least 3 games in it
-    starting_5 = random.choice(order_of_games).copy()
-    while len(starting_5) < 5:
-        starting_5 = random.choice(order_of_games).copy()
-
     # The pop method for set removes and return random elements this is why I made a copy, so it does not mutate
-    # TODO
-    top_five = [(starting_5.pop(), -64) for _ in range(0, 5)]
+    top_five = []
+    copy_order_of_games = order_of_games.copy()
+
+    for _ in range(0, 5):
+        starting = random.choice(copy_order_of_games)
+        while len(starting) == 0:
+            starting = random.choice(order_of_games)
+
+        top_five.append((starting.pop(), -64))
 
     for order in range(0, len(order_of_games)):
         for game in order_of_games[order]:
