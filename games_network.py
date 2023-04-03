@@ -249,24 +249,6 @@ def create_recommendation_network(app_id_to_game: dict[int, Game],
                         q.put_nowait(app_id)
                         network.add_recommendation()
 
-        # Get the total number of recommended games, including duplicates
-        total_weight = sum(recommendations[app] for app in recommendations)
-
-        for recommended_app_id in recommendations:
-            # Convert the game app_id to a Game object
-            recommended_game = get_game_data(recommended_app_id)
-            # Calculate the game weight by taking the ratio of this game's number of recommendations to the total
-            # number of recommendations
-            game_weight = recommendations[recommended_app_id] / total_weight
-
-            # Add the recommended game to the network, with a directed edge from game to recommended_game
-            network.add_recommendation(visited_app_ids[app_id], recommended_game, game_weight)
-
-            # Only add teh game to the queue if its recommendations have not already been checked
-            if recommended_app_id not in visited_app_ids:
-                visited_app_ids[recommended_app_id] = recommended_game
-                q.put_nowait(recommended_game)
-
     return network
 
 
